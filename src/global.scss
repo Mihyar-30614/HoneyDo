@@ -8,7 +8,7 @@
  * For more information on global stylesheets, visit the documentation:
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
-
+@use 'tailwindcss';
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 
@@ -34,4 +34,17 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+// @import '@ionic/angular/css/palettes/dark.system.css';
+
+.center-div {
+	margin-top: 5%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	justify-self: center;
+	max-height: 80dvh;
+}
+
+.ion-form{
+	margin-bottom: 5px;
+}

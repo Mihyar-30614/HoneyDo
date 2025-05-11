@@ -1,0 +1,106 @@
+<div *ngIf="loading" class="loading">Loading...</div>
+<div *ngIf="!loading" class="home-container">
+	<nav class="nav">
+		<div class="nav-content">
+			<h1 class="nav-title">Honey Do list</h1>
+			<button (click)="logout()" class="btn btn-outline">Logout</button>
+		</div>
+	</nav>
+
+	<main class="main-content">
+		<!-- Projects -->
+		<section class="projects-section">
+			<div class="section-header">
+				<h2>My Projects</h2>
+			</div>
+
+			<form (ngSubmit)="addProject()" class="quick-add-form">
+				<input name="newProject" type="text" [(ngModel)]="newProjectName" placeholder="+ Add new project"
+					class="quick-add-input" />
+			</form>
+
+			<div class="projects-grid">
+				<div *ngFor="let project of projects" class="project-card"
+					[class.selected]="selectedProject?.id === project.id">
+					<!-- Edit mode -->
+					<form *ngIf="editingProject?.id === project.id" (ngSubmit)="updateProject()"
+						class="project-edit-form">
+						<input name="editProject" type="text" [(ngModel)]="editProjectName" class="project-edit-input"
+							autofocus />
+						<div class="project-actions">
+							<button type="submit" class="project-action-btn save">Save</button>
+							<button type="button" (click)="cancelProjectEdit()" class="project-action-btn cancel">
+								Cancel
+							</button>
+						</div>
+					</form>
+
+					<!-- Display mode -->
+					<ng-container *ngIf="editingProject?.id !== project.id">
+						<div class="project-content" (click)="selectProject(project)">
+							<div class="project-icon">📁</div>
+							<h3 class="project-name">{{ project.name }}</h3>
+						</div>
+						<div class="project-actions">
+							<button (click)="editProj(project)" class="project-action-btn edit">
+								✏️
+							</button>
+							<button (click)="deleteProject(project.id)" class="project-action-btn delete">
+								🗑️
+							</button>
+						</div>
+					</ng-container>
+				</div>
+			</div>
+		</section>
+
+		<!-- Todos -->
+		<section class="todos-section" *ngIf="selectedProject; else emptyState">
+			<div class="section-header">
+				<h2>{{ selectedProject.name }}</h2>
+			</div>
+
+			<form (ngSubmit)="addTodo()" class="quick-add-form">
+				<input name="newTodo" type="text" [(ngModel)]="newTodoTitle" placeholder="+ Add new todo"
+					class="quick-add-input" />
+			</form>
+
+			<div class="todos-list">
+				<div *ngFor="let todo of todos" class="todo-item" [class.completed]="todo.completed">
+					<!-- Edit mode -->
+					<form *ngIf="editingTodo?.id === todo.id" (ngSubmit)="updateTodo()" class="todo-edit-form">
+						<input name="editTodo" type="text" [(ngModel)]="editTodoTitle" class="todo-edit-input"
+							autofocus />
+						<div class="todo-actions">
+							<button type="submit" class="todo-action-btn save">Save</button>
+							<button type="button" (click)="cancelTodoEdit()" class="todo-action-btn cancel">
+								Cancel
+							</button>
+						</div>
+					</form>
+
+					<!-- Display mode -->
+					<ng-container *ngIf="editingTodo?.id !== todo.id">
+						<input type="checkbox" [checked]="todo.completed" (change)="toggleTodo(todo)"
+							class="todo-checkbox" />
+						<span class="todo-title">{{ todo.title }}</span>
+						<div class="todo-actions">
+							<button (click)="editT(todo)" class="todo-action-btn edit">
+								✏️
+							</button>
+							<button (click)="deleteTodo(todo.id)" class="todo-action-btn delete">
+								🗑️
+							</button>
+						</div>
+					</ng-container>
+				</div>
+			</div>
+		</section>
+
+		<ng-template #emptyState>
+			<div class="empty-state">
+				<p>Select a project to manage your todos</p>
+			</div>
+		</ng-template>
+	</main>
+</div>
