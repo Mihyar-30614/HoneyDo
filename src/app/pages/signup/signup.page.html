@@ -1,44 +1,106 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/landing"></ion-back-button>
+      <ion-back-button defaultHref="/landing" class="text-yellow-700"></ion-back-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="signup-content">
-  <div class="signup-card">
-    <h1 class="signup-header">Create an Account</h1>
-    <p class="signup-subheading">Sign up to start organizing your tasks</p>
+<ion-content>
+    <ion-card class="rounded-2xl shadow-lg">
+    	<ion-card-header>
+        	<ion-card-title class="text-2xl font-bold text-yellow-700">Welcome!</ion-card-title>
+        	<ion-card-subtitle>Join us to get started</ion-card-subtitle>
+    	</ion-card-header>
+    	<ion-card-content class="space-y-6">
 
-    <ion-text color="danger" *ngIf="error" class="error-text">
-      {{ error }}
-    </ion-text>
+			<ion-button
+				fill="clear"
+				expand="block"
+				(click)="handleGoogleSignIn()"
+				[disabled]="loading"
+				class="mt-4 px-8 py-3 bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold rounded-full shadow-md hover:shadow-lg transition-transform transform hover:scale-105">
+				<ion-icon slot="start" name="logo-google" class="text-xl"></ion-icon>
+				Continue with Google
+			</ion-button>
 
-    <form (ngSubmit)="handleSubmit()">
-      <ion-item lines="full">
-        <ion-label position="stacked">Email</ion-label>
-        <ion-input type="email" required [(ngModel)]="email" name="email" placeholder="Enter your email"></ion-input>
-      </ion-item>
+			<div class="separator">
+				<div></div>
+				<span>OR</span>
+				<div></div>
+			</div>
 
-      <ion-item lines="full">
-        <ion-label position="stacked">Password</ion-label>
-        <ion-input type="password" required [(ngModel)]="password" name="password" placeholder="Enter your password"></ion-input>
-      </ion-item>
+			<form (ngSubmit)="handleSubmit()" class="space-y-4">
 
-      <ion-item lines="full">
-        <ion-label position="stacked">Confirm Password</ion-label>
-        <ion-input type="password" required [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm your password"></ion-input>
-      </ion-item>
+				<ion-input
+						type="email"
+						required
+						[(ngModel)]="email"
+						name="email"
+						[disabled]="loading"
+						placeholder="Enter your email"
+						label="Email"
+						labelPlacement="stacked"
+						autocomplete="email"
+						autocorrect="off"
+						autocapitalize="none"
+						spellcheck="false"
+						fill="outline"
+				/>
 
-      <ion-button expand="block" type="submit" class="signup-button">
-        Sign Up
-      </ion-button>
-    </form>
 
-    <div class="footer">
-      <p>Already have an account?</p>
-      <a routerLink="/login">Sign in</a>
-    </div>
-  </div>
+				<ion-input
+					type="password"
+					[(ngModel)]="password"
+					(ngModelChange)="onPasswordInput($event)"
+					name="password"
+					required
+					[disabled]="loading"
+					placeholder="Enter your password"
+					label="Password"
+					labelPlacement="stacked"
+					fill="outline"
+				/>
+
+				<!-- Strength Indicator -->
+				<ion-progress-bar [value]="passwordStrength" color="warning"></ion-progress-bar>
+				<ion-text
+					class="block text-center text-sm"
+					[ngClass]="{
+					'text-red-500': passwordStrength < 0.4,
+					'text-yellow-500': passwordStrength >= 0.4 && passwordStrength < 0.8,
+					'text-green-600': passwordStrength >= 0.8
+					}"
+				>
+				Strength: {{ passwordStrengthLabel() }}
+				</ion-text>
+
+				<ion-input
+					type="password"
+					[(ngModel)]="confirmPassword"
+					name="confirmPassword"
+					required
+					[disabled]="loading"
+					placeholder="Confirm your password"
+					label="Confirm Password"
+					labelPlacement="stacked"
+					fill="outline"
+				/>
+
+				<ion-text *ngIf="error" color="danger" class="block text-center">
+					{{ error }}
+				</ion-text>
+
+				<ion-button expand="block" type="submit" [disabled]="loading" fill="clear"
+					class="mt-4 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-full shadow-md hover:shadow-lg transition-transform transform hover:scale-105">
+					{{ loading ? 'Signing up...' : 'Sign Up' }}
+				</ion-button>
+			</form>
+
+			<div class="footer">
+				<p>Already have an account?</p>
+				<a [routerLink]="['/login']">Log in</a>
+			</div>
+    	</ion-card-content>
+    </ion-card>
 </ion-content>
