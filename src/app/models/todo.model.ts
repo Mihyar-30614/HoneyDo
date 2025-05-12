@@ -4,4 +4,5 @@ export interface Todo {
 	completed: boolean;
 	projectId: string;
 	createdAt?: any;
+	archived?: boolean;
 }

@@ -21,13 +21,19 @@ export class HomePage implements OnInit {
 	user: User | null = null;
 	loading = true;
 
+	// Active and Archived lists
 	projects: Project[] = [];
+	archivedProjects: Project[] = [];
 	selectedProject: Project | null = null;
+
+	todos: Todo[] = [];
+	archivedTodos: Todo[] = [];
+
+	// Form fields
 	newProjectName = '';
 	editingProject: Project | null = null;
 	editProjectName = '';
 
-	todos: Todo[] = [];
 	newTodoTitle = '';
 	editingTodo: Todo | null = null;
 	editTodoTitle = '';
@@ -53,8 +59,16 @@ export class HomePage implements OnInit {
 	loadProjects() {
 		if (!this.user) return;
 		this.data.getProjects(this.user.uid).subscribe(list => {
-			this.projects = list;
+			// separate active and archived
+			this.projects = list.filter(p => !p.archived);
+			this.archivedProjects = list.filter(p => p.archived);
 			this.loading = false;
+
+			// keep selected if still active
+			if (this.selectedProject) {
+				const activeMatch = this.projects.find(p => p.id === this.selectedProject!.id);
+				if (!activeMatch) this.selectedProject = null;
+			}
 		});
 	}
 
@@ -78,7 +92,7 @@ export class HomePage implements OnInit {
 	updateProject() {
 		if (!this.editingProject || !this.editProjectName.trim()) return;
 		this.data
-			.updateProject(this.editingProject.id, this.editProjectName)
+			.updateProject(this.editingProject.id, { name: this.editProjectName })
 			.then(() => {
 				this.editingProject = null;
 				this.editProjectName = '';
@@ -90,18 +104,24 @@ export class HomePage implements OnInit {
 		this.editProjectName = '';
 	}
 
-	deleteProject(id: string) {
-		this.data.deleteProject(id).then(() => {
-			if (this.selectedProject?.id === id) {
-				this.selectedProject = null;
-				this.todos = [];
-			}
-		});
+	archiveProject(id: string) {
+		this.data.updateProject(id, { archived: true });
+		if (this.selectedProject?.id === id) {
+			this.selectedProject = null;
+			this.todos = [];
+		}
+	}
+
+	unarchiveProject(id: string) {
+		this.data.updateProject(id, { archived: false });
 	}
 
 	// --- Todos ---
 	loadTodos(projectId: string) {
-		this.data.getTodos(projectId).subscribe(list => (this.todos = list));
+		this.data.getTodos(projectId).subscribe(list => {
+			this.todos = list.filter(t => !t.archived);
+			this.archivedTodos = list.filter(t => t.archived);
+		});
 	}
 
 	addTodo() {
@@ -133,6 +153,14 @@ export class HomePage implements OnInit {
 	cancelTodoEdit() {
 		this.editingTodo = null;
 		this.editTodoTitle = '';
+	}
+
+	archiveTodo(id: string) {
+		this.data.updateTodo(id, { archived: true });
+	}
+
+	unarchiveTodo(id: string) {
+		this.data.updateTodo(id, { archived: false });
 	}
 
 	deleteTodo(id: string) {
