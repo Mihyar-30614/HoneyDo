@@ -69,6 +69,6 @@ testem.log
 .DS_Store
 Thumbs.db
 
-/src/environments/environment.ts
-/src/environments/environment.prod.ts
-/src/environments/firebaseConfig.ts
+# Environment files
+src/environments/*.ts
+src/environments/*.json
