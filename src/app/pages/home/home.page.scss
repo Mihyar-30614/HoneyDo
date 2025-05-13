@@ -1,110 +1,130 @@
-.home-content {
-  padding: 1rem;
-  background: linear-gradient(to bottom, #fbeeac, #fbd38d);
-  min-height: 100vh;
+ion-title{
+	justify-self: center;
 }
 
-.project-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.avatar-initials {
+	background-color: #f4b400;
+	color: white;
+	font-weight: bold;
+	font-size: 16px;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: uppercase;
+	cursor: pointer;
 }
-
-.project-card {
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+ion-grid{
+	margin: 5px;
+	ion-col{
+		margin: 5px;
+	}
 }
-
-.todo-list {
-  margin-top: 1rem;
-}
-
-ion-button {
-  margin-top: 1rem;
-}
-
-ion-content {
-  --background: #f8fafc;
-}
-
 ion-card {
-  margin: 0;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-
-  animation: slideIn 0.3s ease-out forwards;
+	border-radius: 12px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	transition: transform 0.2s ease-in-out;
+	max-height: 20vh;
+	overflow: hidden;
+	height: 20vh;
+	padding: 10px;
 }
 
-ion-fab-button {
-  --background: #f6ad55;
-  --background-hover: #ecc94b;
-  --background-activated: #ecc94b;
-
-  &::part(native) {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  }
+/* User dropdown panel */
+.user-dropdown {
+	position: absolute;
+	top: 60px;
+	right: 16px;
+	width: 260px;
+	background: var(--ion-color-light);
+	border-radius: 12px;
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+	z-index: 1000;
+	animation: fadeIn 0.2s ease-in-out;
 }
 
-.project-stats {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.875rem;
-  color: #718096;
+.dropdown-header {
+	padding: 16px;
+	border-bottom: 1px solid #e0e0e0;
+	background: #f9f9f9;
 }
 
-.signup-card {
-  background: white;
-  padding: 2rem 1.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: left;
-  width: 100%;
-  min-height: 250px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  transition: box-shadow 0.2s, transform 0.2s;
-}
-.signup-card:hover {
-  box-shadow: 0 8px 24px rgba(246, 173, 85, 0.15);
-  transform: translateY(-2px) scale(1.02);
+.email {
+	font-weight: 500;
+	font-size: 14px;
+	color: #333;
+	margin: 0;
+	word-break: break-word;
 }
 
-.login-button {
-  background-color: #ecc94b;
-  color: black;
-  margin-top: 1rem;
+/* Section headers */
+.section-title {
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: #b58900;
+	margin: 1.5rem 0 0.75rem;
 }
 
-.text-honey-dark {
-  color: #f6ad55;
+.section-subtitle {
+	font-size: 1rem;
+	font-weight: 500;
+	color: #666;
+	margin: 1.5rem 0 0.5rem;
 }
 
-.bg-honey-dark {
-  background-color: #f6ad55;
+
+/* Add project row */
+.add-project {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 1rem;
 }
 
-.bg-honey-light {
-  background-color: #fbeeac;
+/* Input and button enhancements */
+ion-input {
+	--padding-start: 12px;
+	--border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Strikethrough style */
+.line-through {
+	text-decoration: line-through;
+	color: #888;
 }
 
 /* Animations */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
-/* Progress bar animation */
-.progress-bar {
-  transition: width 0.6s ease;
+/* Responsive layout */
+@media (max-width: 600px) {
+
+	.project-list,
+	.archived-list {
+		flex-direction: column;
+	}
+
+	.project-card,
+	.archived-card {
+		width: 100%;
+	}
+
+	.user-dropdown {
+		right: 8px;
+		width: 90%;
+	}
 }

@@ -1,4 +1,3 @@
-// src/app/services/data.service.ts
 import { Injectable, inject } from '@angular/core';
 import {
 	Firestore,
@@ -37,10 +36,11 @@ export class DataService {
 	/**
 	 * Adds a new project defaulting to not archived.
 	 */
-	addProject(name: string, userId: string) {
+	addProject(name: string, userId: string, description?: string) {
 		return addDoc(collection(this.fs, 'projects'), {
 			name,
 			userId,
+			description: description || '',
 			archived: false,
 			createdAt: serverTimestamp(),
 		});
@@ -77,15 +77,16 @@ export class DataService {
 	/**
 	 * Adds a new todo defaulting to not archived.
 	 */
-	addTodo(title: string, projectId: string) {
+	addTodo(title: string, projectId: string, status: 'new' | 'in-progress' | 'done' = 'new') {
 		return addDoc(collection(this.fs, 'todos'), {
 			title,
-			completed: false,
+			status,
 			archived: false,
 			projectId,
 			createdAt: serverTimestamp(),
 		});
 	}
+
 
 	/**
 	 * Updates a todo document by its ID. Accepts partial fields, including completed, title, or archived flag.
