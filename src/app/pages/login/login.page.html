@@ -1,86 +1,82 @@
 <ion-header class="ion-no-border">
-	<ion-toolbar>
-		<ion-buttons slot="start">
-			<ion-back-button defaultHref="/landing" class="text-yellow-700"></ion-back-button>
-		</ion-buttons>
-	</ion-toolbar>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/landing" color="warning"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 
-<ion-content>
-	<ion-card>
-		<ion-card-header class="ion-text-center">
-			<ion-card-title class="highlight-text">Welcome Back!</ion-card-title>
-			<ion-card-subtitle>Great to see you again</ion-card-subtitle>
-		</ion-card-header>
+<ion-content class="ion-padding">
+  <ion-card class="login-card">
+    <ion-card-header class="ion-text-center">
+      <ion-card-title class="highlight-text">Welcome Back!</ion-card-title>
+      <ion-card-subtitle>We're happy to see you again</ion-card-subtitle>
+    </ion-card-header>
 
-		<ion-card-content>
+    <ion-card-content>
+      <ion-button
+        expand="block"
+        fill="solid"
+        shape="round"
+        color="warning"
+        (click)="handleGoogleSignIn()"
+        [disabled]="loading"
+      >
+        Continue with Google
+      </ion-button>
 
-			<ion-button
-				fill="clear"
-				expand="block"
-				(click)="handleGoogleSignIn()"
-				[disabled]="loading"
-				class="mt-10 px-8 py-3 bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
-				>
-				Continue with Google
-			</ion-button>
+      <div class="separator">
+        <div></div>
+        <span>or</span>
+        <div></div>
+      </div>
 
-			<div class="separator">
-				<div></div>
-				<span>or</span>
-				<div></div>
-			</div>
+      <form (ngSubmit)="handleSubmit()" class="ion-margin-top">
+        <ion-input
+          type="email"
+          name="email"
+          label="Email"
+          labelPlacement="stacked"
+          placeholder="Enter your email"
+          required
+          [(ngModel)]="email"
+          [disabled]="loading"
+          fill="outline"
+        ></ion-input>
 
-			<form (ngSubmit)="handleSubmit()" class="ion-form">
-				<ion-input
-					type="email"
-					required
-					[(ngModel)]="email"
-					name="email"
-					[disabled]="loading"
-					placeholder="Enter your email"
-					label="Email"
-					labelPlacement="stacked"
-					autocomplete="email"
-					autocorrect="off"
-					autocapitalize="none"
-					spellcheck="false"
-					fill="outline"
-				/>
+        <ion-input
+          type="password"
+          name="password"
+          label="Password"
+          labelPlacement="stacked"
+          placeholder="Enter your password"
+          required
+          [(ngModel)]="password"
+          [disabled]="loading"
+          fill="outline"
+        >
+          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+        </ion-input>
 
-				<ion-input
-					type="password"
-					required
-					[(ngModel)]="password"
-					name="password"
-					[disabled]="loading"
-					placeholder="Enter your password"
-					label="Password"
-					labelPlacement="stacked"
-					autocomplete="off"
-					autocorrect="off"
-					autocapitalize="none"
-					spellcheck="false"
-					fill="outline"
-				>
-				<ion-input-password-toggle color="medium" slot="end"></ion-input-password-toggle>
-				</ion-input>
+        <ion-button
+          expand="block"
+          type="submit"
+          fill="solid"
+          color="warning"
+          class="ion-margin-top"
+          [disabled]="loading"
+        >
+          {{ loading ? 'Signing in...' : 'Sign In' }}
+        </ion-button>
+      </form>
 
-				<ion-button
-					expand="block"
-					type="submit"
-					[disabled]="loading"
-					fill="clear"
-					class="mt-10 px-8 py-3 bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
-					>
-					{{ loading ? 'Signing in...' : 'Sign In' }}
-				</ion-button>
-			</form>
+      <ion-text color="danger" *ngIf="error" class="ion-padding-top">
+        <p class="ion-text-center">{{ error }}</p>
+      </ion-text>
 
-			<div class="footer">
-				<p>Don't have an account?</p>
-				<a [routerLink]="['/signup']">Create an account</a>
-			</div>
-		</ion-card-content>
-	</ion-card>
+      <div class="footer ion-text-center ion-margin-top">
+        <p>Don't have an account? <a [routerLink]="['/signup']">Create one</a></p>
+      </div>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

@@ -1,3 +1,168 @@
-ion-content{
-	background-color: white;
+ion-content {
+	// background-color: white;
+}
+
+.landing-wrapper {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+
+	@media (min-width: 768px) {
+		flex-direction: row;
+	}
+}
+
+.landing-left,
+.landing-right {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+}
+
+.landing-left {
+	height: 33vh;
+
+	@media (min-width: 768px) {
+		height: 100vh;
+		width: 50%;
+	}
+
+	@media (min-width: 1024px) {
+		width: 40%;
+	}
+}
+
+.landing-right {
+	flex-direction: column;
+	text-align: center;
+	margin-top: -50px;
+	z-index: 10;
+
+	@media (min-width: 768px) {
+		margin-top: 0;
+		width: 60%;
+		text-align: left;
+	}
+}
+
+.content-box {
+	max-width: 400px;
+}
+
+.content-box h1 {
+	font-size: 3rem;
+	font-weight: 800;
+
+	@media (min-width: 640px) {
+		font-size: 4rem;
+	}
+}
+
+.text-dark {
+	color: #1f2937; // Tailwind's gray-800
+}
+
+.text-accent {
+	color: #facc15; // Tailwind's yellow-500
+}
+
+.content-box p {
+	margin-top: 1.5rem;
+	font-size: 1.125rem;
+	color: #4b5563; // Tailwind's gray-600
+}
+
+.get-started-btn {
+	padding: 0.75rem 2rem;
+	background-color: #facc15;
+	color: #1f2937;
+	font-weight: 600;
+	border-radius: 0.5rem;
+	transition: all 0.3s ease-in-out;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	position: relative;
+	top: 15px;
+}
+
+.get-started-btn:hover {
+	background-color: #fbbf24;
+	transform: scale(1.05);
+}
+
+/* Shapes */
+.landing-shapes {
+	position: relative;
+	width: 100%;
+	max-width: 400px;
+	height: 16rem;
+
+	@media (min-width: 768px) {
+		height: 100%;
+	}
+}
+
+.shape {
+	position: absolute;
+}
+
+.shape-1 {
+	width: 8rem;
+	height: 8rem;
+	color: #facc15;
+	opacity: 0.8;
+	top: 20%;
+	left: 30%;
+	transform: rotate(15deg);
+}
+
+.shape-2 {
+	width: 6rem;
+	height: 6rem;
+	color: #f59e0b;
+	top: 45%;
+	left: 50%;
+	transform: rotate(-10deg);
+}
+
+.shape-3 {
+	width: 7rem;
+	height: 7rem;
+	color: #fde68a;
+	opacity: 0.7;
+	top: 50%;
+	left: 10%;
+	transform: rotate(5deg);
+}
+
+.shape-4 {
+	width: 5rem;
+	height: 5rem;
+	color: #facc15;
+	top: 10%;
+	right: 15%;
+	transform: rotate(25deg);
+}
+
+.shape-5 {
+	width: 4rem;
+	height: 4rem;
+	color: #f59e0b;
+	bottom: 15%;
+	left: 60%;
+	transform: rotate(-5deg);
+	opacity: 0.9;
+}
+
+.shape-6 {
+	width: 5rem;
+	height: 5rem;
+	color: #fde68a;
+	bottom: 25%;
+	right: 5%;
+	transform: rotate(10deg);
 }

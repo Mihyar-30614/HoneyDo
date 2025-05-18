@@ -1,2 +1,37 @@
-// For information on how to create your own theme, please see:
-// http://ionicframework.com/docs/theming/
+:root {
+	/* === App Primary Color Palette === */
+	--ion-color-primary: #f6ad55; /* honey orange */
+	--ion-color-primary-rgb: 246, 173, 85;
+	--ion-color-primary-contrast: #ffffff;
+	--ion-color-primary-contrast-rgb: 255, 255, 255;
+	--ion-color-primary-shade: #da9a4c;
+	--ion-color-primary-tint: #f7b96d;
+
+	/* === Secondary Accent (Deeper Honey) === */
+	--ion-color-secondary: #ecc94b;
+	--ion-color-secondary-rgb: 236, 201, 75;
+	--ion-color-secondary-contrast: #1a202c;
+	--ion-color-secondary-contrast-rgb: 26, 32, 44;
+	--ion-color-secondary-shade: #d1b241;
+	--ion-color-secondary-tint: #efd061;
+
+	/* === Soft Background / Neutral === */
+	--ion-background-color: #fffaf0;
+	--ion-background-color-rgb: 255, 250, 240;
+
+	/* === Text Color === */
+	--ion-text-color: #2d3748; /* gray-800 */
+	--ion-text-color-rgb: 45, 55, 72;
+
+	/* === Other Useful Grays === */
+	--ion-color-medium: #a0aec0; /* gray-400 */
+	--ion-color-light: #edf2f7;  /* gray-100 */
+
+	/* === Success & Warning (Optional) === */
+	--ion-color-success: #48bb78; /* green-400 */
+	--ion-color-warning: #f6e05e; /* yellow-300 */
+	--ion-color-danger: #e53e3e;  /* red-500 */
+
+	/* === Border & Separator Lines === */
+	--ion-border-color: #e2e8f0;
+  }
