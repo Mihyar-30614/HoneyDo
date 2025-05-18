@@ -6,10 +6,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+	"local": "http-server ./www -p 8080 -c-1 --fallback index.html"
   },
   "private": true,
   "dependencies": {
