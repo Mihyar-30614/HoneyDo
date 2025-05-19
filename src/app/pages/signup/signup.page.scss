@@ -1,71 +1,125 @@
-ion-card {
-	width: 80%;
+/* Signup Card Layout */
+ion-card.signup-card {
+	width: 90%;
 	max-width: 600px;
-	border-radius: 12px;
-	margin: 0 auto;
-	padding: 5px;
-
-	ion-card-title {
-		font-size: 1.5rem;
-		text-align: center;
-		margin-bottom: 20px;
-	}
+	margin: 2rem auto;
+	border-radius: 16px;
+	padding: 1rem;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+	padding-bottom: 20px;
 
 	ion-card-header {
 		text-align: center;
-		margin-bottom: 20px;
+		margin-bottom: 1rem;
+
+		ion-card-title {
+			font-size: 1.75rem;
+			color: #b7791f; // dark yellow
+			font-weight: bold;
+		}
+
+		ion-card-subtitle {
+			color: #555;
+		}
 	}
 
 	ion-card-content {
-		padding: 20px;
+		padding: 1rem;
 
 		ion-input {
-			margin-bottom: 20px;
+			margin-bottom: 1rem;
+		}
+
+		ion-progress-bar {
+			margin-top: 0.5rem;
+			margin-bottom: 0.25rem;
+		}
+
+		.strength-text {
+			display: block;
+			text-align: center;
+			font-size: 0.85rem;
+			font-weight: 500;
+
+			&.strength-weak {
+				color: #e53e3e;
+			}
+
+			&.strength-medium {
+				color: #dd6b20;
+			}
+
+			&.strength-strong {
+				color: #38a169;
+			}
+		}
+
+		.error-text {
+			text-align: center;
+			color: #e53e3e;
+			font-size: 0.9rem;
+			margin: 0.5rem 0;
+		}
+
+		.signup-button,
+		.google-button {
+			display: block;
+			width: 100%;
+			font-weight: 600;
+			border-radius: 9999px;
+			padding: 0.75rem 1rem;
+			transition: 0.3s ease-in-out;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+			&:hover {
+				transform: scale(1.03);
+			}
+		}
+
+		.google-button {
+			background-color: #f6ad55;
+			color: white;
+			margin-top: 1rem;
+		}
+
+		.signup-button {
+			background-color: #ecc94b;
+			color: white;
+			margin-top: 1.5rem;
+		}
+
+		.separator {
+			display: flex;
+			align-items: center;
+			margin: 1.5rem 0;
+			font-size: 0.9rem;
+			color: #aaa;
+
+			div {
+				flex: 1;
+				height: 1px;
+				background: #e2e8f0;
+			}
+
+			span {
+				margin: 0 1rem;
+				color: #a0aec0;
+			}
+		}
+
+		.footer {
+			margin-top: 2rem;
+			font-size: 0.9rem;
+			color: #718096;
+			display: flex;
+			justify-content: center;
+
+			a {
+				color: #f6ad55;
+				font-weight: bold;
+				text-decoration: none;
+				margin-left: 5px;
+			}
 		}
 	}
-}
-
-.google-button {
-	background-color: #f6ad55;
-	color: white;
-	margin-bottom: 1rem;
-}
-
-.separator {
-	display: flex;
-	align-items: center;
-	margin: 1rem 0;
-}
-
-.separator div {
-	flex: 1;
-	height: 1px;
-	background: #e2e8f0;
-}
-
-.separator span {
-	margin: 0 0.5rem;
-	color: #a0aec0;
-}
-
-.signup-button {
-	background-color: #ecc94b;
-	color: white;
-	margin-top: 1rem;
-}
-
-.footer {
-	margin-top: 1.5rem;
-	font-size: 0.9rem;
-	color: #718096;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.footer a {
-	color: #f6ad55;
-	text-decoration: none;
-	font-weight: bold;
-	margin-left: 5px;
 }

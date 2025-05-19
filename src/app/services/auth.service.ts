@@ -12,12 +12,12 @@ export class AuthService {
 			.then((cred) => cred.user);
 	}
 
-	signIn(email: string, password: string): Promise<User> {
+	login(email: string, password: string): Promise<User> {
 		return signInWithEmailAndPassword(this.auth, email, password)
 			.then((cred) => cred.user);
 	}
 
-	signInWithGoogle(): Promise<User> {
+	loginWithGoogle(): Promise<User> {
 		const provider = new GoogleAuthProvider();
 		return signInWithPopup(this.auth, provider)
 			.then((cred) => cred.user);

@@ -7,16 +7,42 @@ import { Project } from '../../models/project.model';
 import { Todo } from '../../models/todo.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
 import { ProjectFilterPipe } from './project-filter.pipe';
 import { Timestamp } from 'firebase/firestore';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonBackButton,
+  IonIcon,
+  IonContent,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonBadge,
+  IonInput,
+  IonTextarea,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonProgressBar,
+  IonSearchbar,
+} from '@ionic/angular/standalone';
+
 
 @Component({
 	selector: 'app-home',
 	templateUrl: './home.page.html',
 	styleUrls: ['./home.page.scss'],
 	standalone: true,
-	imports: [IonicModule, CommonModule, FormsModule, ProjectFilterPipe],
+	imports: [IonBadge, IonTitle, IonCardContent, IonProgressBar, IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonCol, IonRow, IonGrid, IonLabel, IonIcon, IonItem, IonList, IonButtons, IonHeader, IonToolbar, CommonModule, FormsModule, ProjectFilterPipe, IonContent, IonButton],
 })
 export class HomePage implements OnInit {
 	user: User | null = null;
@@ -50,15 +76,15 @@ export class HomePage implements OnInit {
 	) { }
 
 	ngOnInit(): void {
-		this.auth.user$.subscribe(u => {
-			if (!u) {
-				this.router.navigate(['/login']);
-			} else {
-				this.user = u;
-				this.userInitials = this.generateInitials(u);
-				this.loadProjects();
-			}
-		});
+		// this.auth.user$.subscribe(u => {
+		// 	if (!u) {
+		// 		this.router.navigate(['/login']);
+		// 	} else {
+		// 		this.user = u;
+		// 		this.userInitials = this.generateInitials(u);
+		// 		this.loadProjects();
+		// 	}
+		// });
 	}
 
 	generateInitials(user: User): string {

@@ -1,36 +1,60 @@
 .login-card {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  border-radius: 12px;
+	width: 90%;
+	max-width: 600px;
+	margin: 2rem auto;
+	border-radius: 16px;
+	padding: 1rem;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+
+	ion-card-header {
+		text-align: center;
+		margin-bottom: 1rem;
+
+		ion-card-title {
+			font-size: 1.75rem;
+			color: #b7791f; // dark yellow
+			font-weight: bold;
+		}
+
+		ion-card-subtitle {
+			color: #555;
+		}
+	}
+}
+
+form {
+	padding-bottom: 30px;
+
+	ion-input {
+		margin-bottom: 20px;
+	}
 }
 
 .separator {
-  display: flex;
-  align-items: center;
-  margin: 1rem 0;
-  text-align: center;
+	display: flex;
+	align-items: center;
+	margin: 1rem 0;
+	text-align: center;
 
-  div {
-    flex: 1;
-    height: 1px;
-    background: var(--ion-color-medium-tint, #ccc);
-  }
+	div {
+		flex: 1;
+		height: 1px;
+		background: var(--ion-color-medium-tint, #ccc);
+	}
 
-  span {
-    margin: 0 10px;
-    font-size: 0.9rem;
-    color: var(--ion-color-medium, #888);
-  }
+	span {
+		margin: 0 10px;
+		font-size: 0.9rem;
+		color: var(--ion-color-medium, #888);
+	}
 }
 
 .footer p {
-  font-size: 0.9rem;
-  color: var(--ion-color-medium, #777);
+	font-size: 0.9rem;
+	color: var(--ion-color-medium, #777);
 }
 
 .footer a {
-  color: var(--ion-color-warning, #f6ad55);
-  font-weight: 600;
-  text-decoration: none;
+	font-weight: 600;
+	text-decoration: none;
 }

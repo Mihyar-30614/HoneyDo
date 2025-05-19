@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
+import { IonHeader, IonCardTitle, IonBackButton, IonToolbar, IonButtons, IonContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonButton, IonIcon, IonProgressBar, IonText } from "@ionic/angular/standalone";
 
 @Component({
 	selector: 'app-signup',
 	standalone: true,
-	imports: [IonicModule, CommonModule, FormsModule, RouterModule],
+	imports: [IonText, IonProgressBar, IonIcon, IonButton, IonCardContent, IonCardSubtitle, IonCardHeader, IonCard, IonContent, IonButtons, IonToolbar, IonBackButton, IonCardTitle, IonHeader,  CommonModule, FormsModule, RouterModule],
 	templateUrl: './signup.page.html',
 	styleUrls: ['./signup.page.scss'],
 })
@@ -39,7 +39,7 @@ export class SignupPage implements OnInit {
 	async handleGoogleSignIn() {
 		this.loading = true;
 		try {
-			await this.auth.signInWithGoogle();
+			await this.auth.loginWithGoogle();
 			this.router.navigate(['/home']); // ← redirect on social-login
 		} catch (err) {
 			console.error('Google sign-in failed', err);
