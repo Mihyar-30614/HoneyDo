@@ -15,10 +15,12 @@ import {
 import { Observable } from 'rxjs';
 import { Project } from '../models/project.model';
 import { Todo } from '../models/todo.model';
+import { Auth } from '@angular/fire/auth';
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
 	private fs = inject(Firestore);
+	private auth = inject(Auth);
 
 	/**
 	 * Fetches all projects for a user, active and archived.
@@ -27,7 +29,7 @@ export class DataService {
 		const ref = collection(this.fs, 'projects');
 		const q = query(
 			ref,
-			where('userId', '==', userId),
+			where('ownerId', '==', userId),
 			orderBy('createdAt', 'desc')
 		);
 		return collectionData(q, { idField: 'id' }) as Observable<Project[]>;
@@ -39,7 +41,7 @@ export class DataService {
 	addProject(name: string, userId: string, description?: string) {
 		return addDoc(collection(this.fs, 'projects'), {
 			name,
-			userId,
+			ownerId: userId,
 			description: description || '',
 			archived: false,
 			createdAt: serverTimestamp(),
@@ -49,8 +51,9 @@ export class DataService {
 	/**
 	 * Updates a project document by its ID. Accepts partial fields, including name or archived flag.
 	 */
-	updateProject(id: string, data: Partial<Project>) {
-		return updateDoc(doc(this.fs, `projects/${id}`), data);
+	updateProject(id: string, data: Partial<Project>, userId: string) {
+		const { ownerId, ...updateData } = data;
+		return updateDoc(doc(this.fs, `projects/${id}`), updateData);
 	}
 
 	/**
@@ -65,10 +68,18 @@ export class DataService {
 	 * Fetches all todos for a project, active and archived.
 	 */
 	getTodos(projectId: string): Observable<Todo[]> {
+		const userId = this.auth.currentUser?.uid;
+		if (!userId) {
+			return new Observable(subscriber => {
+				subscriber.error('User not authenticated');
+				subscriber.complete();
+			});
+		}
 		const ref = collection(this.fs, 'todos');
 		const q = query(
 			ref,
 			where('projectId', '==', projectId),
+			where('ownerId', '==', userId),
 			orderBy('createdAt', 'desc')
 		);
 		return collectionData(q, { idField: 'id' }) as Observable<Todo[]>;
@@ -78,15 +89,19 @@ export class DataService {
 	 * Adds a new todo defaulting to not archived.
 	 */
 	addTodo(title: string, projectId: string, status: 'new' | 'in-progress' | 'done' = 'new') {
+		const userId = this.auth.currentUser?.uid;
+		if (!userId) {
+			return Promise.reject('User not authenticated');
+		}
 		return addDoc(collection(this.fs, 'todos'), {
 			title,
 			status,
 			archived: false,
 			projectId,
+			ownerId: userId,
 			createdAt: serverTimestamp(),
 		});
 	}
-
 
 	/**
 	 * Updates a todo document by its ID. Accepts partial fields, including completed, title, or archived flag.

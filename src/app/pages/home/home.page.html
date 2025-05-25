@@ -1,149 +1,247 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar>
-    <ion-title>HoneyDo</ion-title>
-    <ion-buttons slot="end">
-      <ion-button fill="clear" class="avatar-button" (click)="toggleUserMenu()">
-        <div class="avatar-initials">{{ userInitials }}</div>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+<ion-header>
+	<ion-toolbar>
+		<ion-buttons slot="start" *ngIf="viewState === 'todos'">
+			<ion-button (click)="backToProjects()">
+				<ion-icon color="primary" name="arrow-back"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+		<ion-title>{{ viewState === 'projects' ? 'Projects' : selectedProject?.name }}</ion-title>
+		<ion-buttons slot="end">
+			<ion-button shape="round" class="avatar-button" (click)="openUserMenu($event)">
+				{{ userInitials }}
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
 </ion-header>
 
-<!-- Custom Dropdown Panel -->
-<div class="user-dropdown" *ngIf="userMenuOpen">
-  <div class="dropdown-header">
-    <p class="email">{{ user?.email }}</p>
-  </div>
-  <ion-list lines="none">
-    <ion-item button (click)="editProfile(); toggleUserMenu()">
-      <ion-icon slot="start" name="person-outline"></ion-icon>
-      <ion-label>Edit Profile</ion-label>
-    </ion-item>
-    <ion-item button (click)="logout(); toggleUserMenu()">
-      <ion-icon slot="start" name="log-out-outline"></ion-icon>
-      <ion-label>Logout</ion-label>
-    </ion-item>
-  </ion-list>
-</div>
+<ion-content>
+	<!-- Projects View -->
+	<div *ngIf="viewState === 'projects'">
+		<ion-searchbar [(ngModel)]="projectSearch" placeholder="Search projects..." animated></ion-searchbar>
 
-<ion-content class="ion-padding">
-  <!-- Projects Section -->
-  <section>
-    <h2 class="section-title">Projects</h2>
-    <ion-searchbar [(ngModel)]="projectSearch" placeholder="Search projects"></ion-searchbar>
+		<div class="add-project">
+			<ion-input [(ngModel)]="newProjectName" placeholder="New project name..."
+				(ionChange)="newProjectName = $event.detail.value || ''"></ion-input>
+			<ion-textarea [(ngModel)]="newProjectDescription" placeholder="Project description (optional)"
+				rows="2"></ion-textarea>
+			<ion-button (click)="addProject()" [disabled]="!newProjectName.trim()">
+				<ion-icon name="add"></ion-icon>
+				Add Project
+			</ion-button>
+		</div>
 
-    <ion-grid>
-      <ion-row>
-        <ion-col size="12" size-md="6" size-lg="4" *ngFor="let p of projects | projectFilter:projectSearch">
-          <ion-card (click)="selectProject(p)">
-            <ion-card-header>
-              <ion-card-title class="project-title">{{ p.name }}</ion-card-title>
-              <ion-card-subtitle class="project-subtitle">
-                {{ p.createdAt | date: 'shortDate' }}
-                <ion-progress-bar *ngIf="p.id === selectedProject?.id" [value]="calculateProgress()" color="warning" class="progress-bar"></ion-progress-bar>
-                <div *ngIf="p.id === selectedProject?.id" class="task-summary">{{ doneCount }}/{{ todos.length }} tasks completed</div>
-              </ion-card-subtitle>
-            </ion-card-header>
+		<h2 class="section-title">Active Projects</h2>
+		<ion-grid>
+			<ion-row>
+				<ion-col size="12" size-md="6" *ngFor="let project of projects | projectFilter: projectSearch">
+					<ion-card [class.selected]="selectedProject?.id === project.id" (click)="selectProject(project)">
+						<ion-card-header>
+							<ion-card-title>{{ project.name }}</ion-card-title>
+							<ion-card-subtitle *ngIf="project.description">{{ project.description }}</ion-card-subtitle>
+						</ion-card-header>
+						<ion-card-content>
+							<div class="project-stats">
+								<p class="creation-date" *ngIf="project.createdAt">Created: {{ project.createdAt |
+									date:'mediumDate' }}</p>
+								<div class="progress-container">
+									<ion-progress-bar [value]="project.progress || 0"></ion-progress-bar>
+									<p class="progress-text">{{ (project.progress || 0) | percent }} Complete</p>
+								</div>
+							</div>
+							<div class="ion-padding-top">
+								<ion-button class="action-button edit-button"
+									(click)="editProj(project); $event.stopPropagation()">
+									<ion-icon name="create"></ion-icon>
+									Edit
+								</ion-button>
+								<ion-button class="action-button archive-button"
+									(click)="archiveProject(project.id); $event.stopPropagation()">
+									<ion-icon name="archive"></ion-icon>
+									Archive
+								</ion-button>
+							</div>
+						</ion-card-content>
+					</ion-card>
+				</ion-col>
+			</ion-row>
+		</ion-grid>
 
-            <ion-card-content *ngIf="editingProject?.id !== p.id">
-              <div *ngIf="p.description" class="project-description">{{ p.description }}</div>
-              <div class="project-actions">
-                <ion-button expand="block" size="small" color="medium" (click)="editProj(p); $event.stopPropagation()">
-                  <ion-icon name="pencil-outline" slot="start"></ion-icon>Edit
-                </ion-button>
-                <ion-button expand="block" size="small" color="medium" (click)="archiveProject(p.id); $event.stopPropagation()">
-                  <ion-icon name="archive-outline" slot="start"></ion-icon>Archive
-                </ion-button>
-              </div>
-            </ion-card-content>
+		<h2 class="section-title">Archived Projects</h2>
+		<div *ngIf="archivedProjects.length === 0" class="empty-state">
+			<ion-icon name="archive-outline"></ion-icon>
+			<h3>No Archived Projects</h3>
+			<p>Archived projects will appear here</p>
+		</div>
+		<ion-grid>
+			<ion-row>
+				<ion-col size="12" size-md="6" *ngFor="let project of archivedProjects | projectFilter: projectSearch">
+					<ion-card>
+						<ion-card-header>
+							<ion-card-title>{{ project.name }}</ion-card-title>
+							<ion-card-subtitle *ngIf="project.description">{{ project.description }}</ion-card-subtitle>
+						</ion-card-header>
+						<ion-card-content>
+							<ion-progress-bar [value]="project.progress"></ion-progress-bar>
+							<div class="ion-padding-top">
+								<ion-button class="action-button unarchive-button"
+									(click)="unarchiveProject(project.id)">
+									<ion-icon name="refresh"></ion-icon>
+									Unarchive
+								</ion-button>
+							</div>
+						</ion-card-content>
+					</ion-card>
+				</ion-col>
+			</ion-row>
+		</ion-grid>
+	</div>
 
-            <ion-card-content *ngIf="editingProject?.id === p.id">
-              <ion-input [(ngModel)]="editProjectName" placeholder="Project name"></ion-input>
-              <ion-textarea [(ngModel)]="editProjectDescription" placeholder="Description (optional)" autoGrow="true" class="description-input"></ion-textarea>
-              <div class="project-actions">
-                <ion-button expand="block" size="small" (click)="cancelProjectEdit(); $event.stopPropagation()">Cancel</ion-button>
-                <ion-button expand="block" size="small" color="warning" (click)="updateProject(); $event.stopPropagation()">Save</ion-button>
-              </div>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+	<!-- Todos View -->
+	<div *ngIf="viewState === 'todos' && selectedProject">
+		<div class="add-todo">
+			<ion-input [(ngModel)]="newTodoTitle" placeholder="New todo..."
+				(ionChange)="newTodoTitle = $event.detail.value || ''"></ion-input>
+			<ion-button (click)="addTodo()" [disabled]="!newTodoTitle.trim()">
+				<ion-icon name="add"></ion-icon>
+				Add Todo
+			</ion-button>
+		</div>
 
-    <!-- Add Project -->
-    <div class="add-project">
-      <ion-input [(ngModel)]="newProjectName" placeholder="New project" [disabled]="loading"></ion-input>
-      <ion-button color="warning" (click)="addProject()" [disabled]="!newProjectName.trim()">
-        <ion-icon name="add-outline"></ion-icon>
-      </ion-button>
-    </div>
-  </section>
+		<div class="todo-stats">
+			<div class="stat-item total">
+				<div class="stat-value">{{ todos.length }}</div>
+				<div class="stat-label">Total</div>
+			</div>
+			<div class="stat-item new">
+				<div class="stat-value">{{ newTodosCount }}</div>
+				<div class="stat-label">New</div>
+			</div>
+			<div class="stat-item in-progress">
+				<div class="stat-value">{{ inProgressTodosCount }}</div>
+				<div class="stat-label">In Progress</div>
+			</div>
+			<div class="stat-item done">
+				<div class="stat-value">{{ doneTodosCount }}</div>
+				<div class="stat-label">Done</div>
+			</div>
+		</div>
 
-  <!-- Archived Projects -->
-  <section *ngIf="archivedProjects?.length">
-    <h3 class="section-subtitle">Archived Projects</h3>
-    <ion-grid>
-      <ion-row>
-        <ion-col size="12" size-md="6" size-lg="4" *ngFor="let ap of archivedProjects">
-          <ion-card class="archived-card">
-            <ion-card-header>
-              <ion-card-title class="line-through">{{ ap.name }}</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-button fill="clear" size="small" color="warning" (click)="unarchiveProject(ap.id); $event.stopPropagation()">
-                <ion-icon name="arrow-undo-outline"></ion-icon>
-              </ion-button>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </section>
+		<h2 class="section-title">Active Todos</h2>
+		<div *ngIf="todos.length === 0" class="empty-state">
+			<ion-icon name="checkbox-outline"></ion-icon>
+			<h3>No Active Todos</h3>
+			<p>Add a new todo to get started</p>
+		</div>
+		<ion-list>
+			<ion-item *ngFor="let todo of todos" class="todo-item" [class.done]="todo.status === 'done'">
+				<ion-label>
+					<h2 [class.line-through]="todo.status === 'done'">{{ todo.title }}</h2>
+					<p>Created: {{ todo.createdAt?.toDate() | date:'short' }}</p>
+				</ion-label>
+				<ion-badge slot="end" class="status-badge" [class]="todo.status">
+					{{ todo.status }}
+				</ion-badge>
+				<ion-button slot="end" fill="clear" (click)="cycleStatus(todo)">
+					<ion-icon [name]="todo.status === 'done' ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+				</ion-button>
+				<ion-button slot="end" fill="clear" (click)="editT(todo)">
+					<ion-icon name="create"></ion-icon>
+				</ion-button>
+				<ion-button slot="end" fill="clear" (click)="archiveTodo(todo.id)">
+					<ion-icon name="archive"></ion-icon>
+				</ion-button>
+				<ion-button slot="end" fill="clear" (click)="deleteTodo(todo.id)">
+					<ion-icon name="trash"></ion-icon>
+				</ion-button>
+			</ion-item>
+		</ion-list>
 
-  <!-- Todos Section -->
-  <section *ngIf="selectedProject">
-    <h2 class="section-title">{{ selectedProject.name }}</h2>
-    <ion-list>
-      <ion-item *ngFor="let t of todos" lines="none" class="todo-item">
-        <ion-label class="ion-text-wrap">
-          <ion-badge class="task-badge" [color]="t.status === 'new' ? 'primary' : (t.status === 'in-progress' ? 'warning' : 'success')" (click)="cycleStatus(t)">
-            {{ t.status === 'new' ? 'New' : (t.status === 'in-progress' ? 'In Progress' : 'Done') }}
-          </ion-badge>
-          <span [class.line-through]="t.status === 'done'">{{ t.title }}</span>
-        </ion-label>
-        <ion-buttons slot="end">
-          <ion-button *ngIf="editingTodo?.id !== t.id" fill="clear" size="small" color="warning" (click)="editT(t); $event.stopPropagation()">
-            <ion-icon name="pencil-outline"></ion-icon>
-          </ion-button>
-          <ion-button *ngIf="editingTodo?.id === t.id" fill="clear" size="small" color="success" (click)="updateTodo(); $event.stopPropagation()">
-            <ion-icon name="checkmark-outline"></ion-icon>
-          </ion-button>
-          <ion-button fill="clear" size="small" color="medium" (click)="archiveTodo(t.id); $event.stopPropagation()">
-            <ion-icon name="archive-outline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-item>
-    </ion-list>
+		<h2 class="section-title">Archived Todos</h2>
+		<div *ngIf="archivedTodos.length === 0" class="empty-state">
+			<ion-icon name="archive-outline"></ion-icon>
+			<h3>No Archived Todos</h3>
+			<p>Archived todos will appear here</p>
+		</div>
+		<ion-list>
+			<ion-item *ngFor="let todo of archivedTodos" class="todo-item">
+				<ion-label>
+					<h2>{{ todo.title }}</h2>
+					<p>Created: {{ todo.createdAt?.toDate() | date:'short' }}</p>
+				</ion-label>
+				<ion-badge slot="end" class="status-badge" [class]="todo.status">
+					{{ todo.status }}
+				</ion-badge>
+				<ion-button slot="end" fill="clear" (click)="unarchiveTodo(todo.id)">
+					<ion-icon name="refresh"></ion-icon>
+				</ion-button>
+				<ion-button slot="end" fill="clear" (click)="deleteTodo(todo.id)">
+					<ion-icon name="trash"></ion-icon>
+				</ion-button>
+			</ion-item>
+		</ion-list>
+	</div>
 
-    <!-- Archived Todos -->
-    <div *ngIf="archivedTodos?.length">
-      <h3 class="section-subtitle">Archived Tasks</h3>
-      <ion-list>
-        <ion-item *ngFor="let at of archivedTodos">
-          <ion-label class="line-through">{{ at.title }}</ion-label>
-          <ion-button fill="clear" size="small" color="warning" slot="end" (click)="unarchiveTodo(at.id); $event.stopPropagation()">
-            <ion-icon name="arrow-undo-outline"></ion-icon>
-          </ion-button>
-        </ion-item>
-      </ion-list>
-    </div>
+	<!-- User Dropdown Menu -->
+	<div class="user-dropdown" *ngIf="userMenuOpen">
+		<ion-list>
+			<ion-item button (click)="editProfile()">
+				<ion-icon name="person" slot="start"></ion-icon>
+				<ion-label>Edit Profile</ion-label>
+			</ion-item>
+			<ion-item button (click)="logout()">
+				<ion-icon name="log-out" slot="start"></ion-icon>
+				<ion-label>Logout</ion-label>
+			</ion-item>
+		</ion-list>
+	</div>
 
-    <!-- Add Todo -->
-    <ion-item lines="none">
-      <ion-input [(ngModel)]="newTodoTitle" placeholder="New task" [disabled]="!selectedProject"></ion-input>
-      <ion-button color="warning" (click)="addTodo()" [disabled]="!newTodoTitle.trim()">
-        <ion-icon name="add-outline"></ion-icon>
-      </ion-button>
-    </ion-item>
-  </section>
+	<!-- Edit Project Modal -->
+	<ion-modal [isOpen]="editingProject !== null" (didDismiss)="cancelProjectEdit()">
+		<ng-template>
+			<ion-header>
+				<ion-toolbar>
+					<ion-title>Edit Project</ion-title>
+					<ion-buttons slot="end">
+						<ion-button (click)="cancelProjectEdit()">Cancel</ion-button>
+					</ion-buttons>
+				</ion-toolbar>
+			</ion-header>
+			<ion-content class="ion-padding">
+				<ion-item>
+					<ion-input [(ngModel)]="editProjectName" placeholder="Project name"
+						(ionChange)="editProjectName = $event.detail.value || ''"></ion-input>
+				</ion-item>
+				<ion-item>
+					<ion-textarea [(ngModel)]="editProjectDescription" placeholder="Project description"
+						rows="3"></ion-textarea>
+				</ion-item>
+				<ion-button expand="block" (click)="updateProject()" [disabled]="!editProjectName.trim()">
+					Save Changes
+				</ion-button>
+			</ion-content>
+		</ng-template>
+	</ion-modal>
+
+	<!-- Edit Todo Modal -->
+	<ion-modal [isOpen]="editingTodo !== null" (didDismiss)="cancelTodoEdit()">
+		<ng-template>
+			<ion-header>
+				<ion-toolbar>
+					<ion-title>Edit Todo</ion-title>
+					<ion-buttons slot="end">
+						<ion-button (click)="cancelTodoEdit()">Cancel</ion-button>
+					</ion-buttons>
+				</ion-toolbar>
+			</ion-header>
+			<ion-content class="ion-padding">
+				<ion-item>
+					<ion-input [(ngModel)]="editTodoTitle" placeholder="Todo title"
+						(ionChange)="editTodoTitle = $event.detail.value || ''"></ion-input>
+				</ion-item>
+				<ion-button expand="block" (click)="updateTodo()" [disabled]="!editTodoTitle.trim()">
+					Save Changes
+				</ion-button>
+			</ion-content>
+		</ng-template>
+	</ion-modal>
 </ion-content>

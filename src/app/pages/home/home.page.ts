@@ -10,30 +10,30 @@ import { FormsModule } from '@angular/forms';
 import { ProjectFilterPipe } from './project-filter.pipe';
 import { Timestamp } from 'firebase/firestore';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonBackButton,
-  IonIcon,
-  IonContent,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonBadge,
-  IonInput,
-  IonTextarea,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonProgressBar,
-  IonSearchbar,
+	IonHeader,
+	IonToolbar,
+	IonTitle,
+	IonButtons,
+	IonButton,
+	IonIcon,
+	IonContent,
+	IonList,
+	IonItem,
+	IonLabel,
+	IonBadge,
+	IonInput,
+	IonTextarea,
+	IonCard,
+	IonCardHeader,
+	IonCardTitle,
+	IonCardSubtitle,
+	IonCardContent,
+	IonGrid,
+	IonRow,
+	IonCol,
+	IonProgressBar,
+	IonSearchbar,
+	IonModal,
 } from '@ionic/angular/standalone';
 
 
@@ -42,7 +42,35 @@ import {
 	templateUrl: './home.page.html',
 	styleUrls: ['./home.page.scss'],
 	standalone: true,
-	imports: [IonBadge, IonTitle, IonCardContent, IonProgressBar, IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonCol, IonRow, IonGrid, IonLabel, IonIcon, IonItem, IonList, IonButtons, IonHeader, IonToolbar, CommonModule, FormsModule, ProjectFilterPipe, IonContent, IonButton],
+	imports: [
+		CommonModule,
+		FormsModule,
+		ProjectFilterPipe,
+		IonBadge,
+		IonTitle,
+		IonCardContent,
+		IonProgressBar,
+		IonCardSubtitle,
+		IonCardTitle,
+		IonCardHeader,
+		IonCard,
+		IonCol,
+		IonRow,
+		IonGrid,
+		IonLabel,
+		IonIcon,
+		IonItem,
+		IonList,
+		IonButtons,
+		IonHeader,
+		IonToolbar,
+		IonContent,
+		IonButton,
+		IonSearchbar,
+		IonInput,
+		IonTextarea,
+		IonModal,
+	],
 })
 export class HomePage implements OnInit {
 	user: User | null = null;
@@ -50,6 +78,7 @@ export class HomePage implements OnInit {
 	userMenuOpen = false;
 	userMenuEvent: any = null;
 	loading = true;
+	viewState: 'projects' | 'todos' = 'projects';
 
 	// Project and Todo data
 	projects: Project[] = [];
@@ -76,15 +105,15 @@ export class HomePage implements OnInit {
 	) { }
 
 	ngOnInit(): void {
-		// this.auth.user$.subscribe(u => {
-		// 	if (!u) {
-		// 		this.router.navigate(['/login']);
-		// 	} else {
-		// 		this.user = u;
-		// 		this.userInitials = this.generateInitials(u);
-		// 		this.loadProjects();
-		// 	}
-		// });
+		this.auth.user$.subscribe(u => {
+			if (!u) {
+				this.router.navigate(['/login']);
+			} else {
+				this.user = u;
+				this.userInitials = this.generateInitials(u);
+				this.loadProjects();
+			}
+		});
 	}
 
 	generateInitials(user: User): string {
@@ -137,20 +166,38 @@ export class HomePage implements OnInit {
 	// --- Projects ---
 	loadProjects(): void {
 		if (!this.user) return;
-		this.data.getProjects(this.user.uid).subscribe(list => {
-			// Convert Firestore Timestamp to JS Date for createdAt
-			this.projects = list.filter(p => !p.archived).map(p => ({
-				...p,
-				createdAt: p.createdAt instanceof Timestamp ? p.createdAt.toDate() : p.createdAt
-			}));
-			this.archivedProjects = list.filter(p => p.archived).map(p => ({
-				...p,
-				createdAt: p.createdAt instanceof Timestamp ? p.createdAt.toDate() : p.createdAt
-			}));
-			this.loading = false;
+		this.data.getProjects(this.user.uid).subscribe({
+			next: (list) => {
+				// Convert Firestore Timestamp to JS Date for createdAt
+				this.projects = list.filter(p => !p.archived).map(p => ({
+					...p,
+					createdAt: p.createdAt instanceof Timestamp ? p.createdAt.toDate() : p.createdAt,
+					progress: 0 // Initialize progress
+				}));
+				this.archivedProjects = list.filter(p => p.archived).map(p => ({
+					...p,
+					createdAt: p.createdAt instanceof Timestamp ? p.createdAt.toDate() : p.createdAt,
+					progress: 0 // Initialize progress
+				}));
 
-			if (this.selectedProject && !this.projects.find(p => p.id === this.selectedProject?.id)) {
-				this.selectedProject = null;
+				// Load todos for each project to calculate progress
+				const allProjects = [...this.projects, ...this.archivedProjects];
+				allProjects.forEach(project => {
+					this.data.getTodos(project.id).subscribe(todos => {
+						const total = todos.length;
+						const done = todos.filter(t => t.status === 'done').length;
+						project.progress = total === 0 ? 0 : done / total;
+					});
+				});
+
+				if (this.selectedProject && !this.projects.find(p => p.id === this.selectedProject?.id)) {
+					this.selectedProject = null;
+				}
+				this.loading = false;
+			},
+			error: (error) => {
+				console.error('Error loading projects:', error);
+				this.loading = false;
 			}
 		});
 	}
@@ -158,6 +205,13 @@ export class HomePage implements OnInit {
 	selectProject(p: Project): void {
 		this.selectedProject = p;
 		this.loadTodos(p.id);
+		this.viewState = 'todos';
+	}
+
+	backToProjects(): void {
+		this.viewState = 'projects';
+		this.selectedProject = null;
+		this.todos = [];
 	}
 
 	addProject(): void {
@@ -177,13 +231,25 @@ export class HomePage implements OnInit {
 	}
 
 	updateProject(): void {
-		if (!this.editingProject || !this.editProjectName.trim()) return;
+		if (!this.editingProject || !this.editProjectName.trim() || !this.user) return;
+
+		// Create update object with all required fields
+		const updateData = {
+			name: this.editProjectName,
+			description: this.editProjectDescription,
+			ownerId: this.user.uid, // Include ownerId in updates
+			archived: this.editingProject.archived || false
+		};
+
 		this.data
-			.updateProject(this.editingProject.id, { name: this.editProjectName, description: this.editProjectDescription })
+			.updateProject(this.editingProject.id, updateData, this.user.uid)
 			.then(() => {
 				this.editingProject = null;
 				this.editProjectName = '';
 				this.editProjectDescription = '';
+			})
+			.catch(error => {
+				console.error('Error updating project:', error);
 			});
 	}
 
@@ -193,7 +259,22 @@ export class HomePage implements OnInit {
 	}
 
 	archiveProject(id: string): void {
-		this.data.updateProject(id, { archived: true });
+		if (!this.user) return;
+		const project = this.projects.find(p => p.id === id);
+		if (!project) return;
+
+		const updateData = {
+			archived: true,
+			ownerId: this.user.uid, // Include ownerId in updates
+			name: project.name,
+			description: project.description || ''
+		};
+
+		this.data.updateProject(id, updateData, this.user.uid)
+			.catch(error => {
+				console.error('Error archiving project:', error);
+			});
+
 		if (this.selectedProject?.id === id) {
 			this.selectedProject = null;
 			this.todos = [];
@@ -201,7 +282,21 @@ export class HomePage implements OnInit {
 	}
 
 	unarchiveProject(id: string): void {
-		this.data.updateProject(id, { archived: false });
+		if (!this.user) return;
+		const project = this.archivedProjects.find(p => p.id === id);
+		if (!project) return;
+
+		const updateData = {
+			archived: false,
+			ownerId: this.user.uid, // Include ownerId in updates
+			name: project.name,
+			description: project.description || ''
+		};
+
+		this.data.updateProject(id, updateData, this.user.uid)
+			.catch(error => {
+				console.error('Error unarchiving project:', error);
+			});
 	}
 
 	// --- Todos ---
@@ -209,6 +304,14 @@ export class HomePage implements OnInit {
 		this.data.getTodos(projectId).subscribe(list => {
 			this.todos = list.filter(t => !t.archived);
 			this.archivedTodos = list.filter(t => t.archived);
+
+			// Update project progress
+			const project = this.projects.find(p => p.id === projectId) || this.archivedProjects.find(p => p.id === projectId);
+			if (project) {
+				const total = this.todos.length;
+				const done = this.todos.filter(t => t.status === 'done').length;
+				project.progress = total === 0 ? 0 : done / total;
+			}
 		});
 	}
 
@@ -269,6 +372,18 @@ export class HomePage implements OnInit {
 	}
 
 	get doneCount(): number {
+		return this.todos.filter(t => t.status === 'done').length;
+	}
+
+	get newTodosCount(): number {
+		return this.todos.filter(t => t.status === 'new').length;
+	}
+
+	get inProgressTodosCount(): number {
+		return this.todos.filter(t => t.status === 'in-progress').length;
+	}
+
+	get doneTodosCount(): number {
 		return this.todos.filter(t => t.status === 'done').length;
 	}
 
