@@ -8,6 +8,7 @@ import { Todo } from '../../models/todo.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProjectFilterPipe } from './project-filter.pipe';
+import { OrderByPipe } from '../../pipes/order-by.pipe';
 import { Timestamp } from 'firebase/firestore';
 import {
 	IonHeader,
@@ -46,6 +47,7 @@ import {
 		CommonModule,
 		FormsModule,
 		ProjectFilterPipe,
+		OrderByPipe,
 		IonBadge,
 		IonTitle,
 		IonCardContent,
