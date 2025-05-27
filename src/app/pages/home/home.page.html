@@ -92,14 +92,6 @@
 
 	<!-- Todos View -->
 	<div *ngIf="viewState === 'todos' && selectedProject" class="todos-view">
-		<div class="add-section add-todo">
-			<ion-input [(ngModel)]="newTodoTitle" placeholder="New todo..."
-				(ionChange)="newTodoTitle = $event.detail.value || ''"></ion-input>
-			<ion-button (click)="addTodo()" [disabled]="!newTodoTitle.trim()">
-				<ion-icon name="add"></ion-icon>
-				Add Todo
-			</ion-button>
-		</div>
 
 		<div class="todo-stats">
 			<div class="stat-item total">
@@ -130,6 +122,14 @@
 					<div class="stat-label">Done</div>
 				</div>
 			</div>
+		</div>
+		<div class="add-section add-todo">
+			<ion-input [(ngModel)]="newTodoTitle" placeholder="New todo..."
+				(ionChange)="newTodoTitle = $event.detail.value || ''"></ion-input>
+			<ion-button (click)="addTodo()" [disabled]="!newTodoTitle.trim()">
+				<ion-icon name="add"></ion-icon>
+				Add Todo
+			</ion-button>
 		</div>
 
 		<!-- Active Todos -->

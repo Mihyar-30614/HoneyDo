@@ -10,14 +10,19 @@ $spacing: 16px;
 $container-width: 1200px;
 $card-width: 360px;
 
+// Reusable Card Style
+.card {
+	background: $card-background;
+	border-radius: $border-radius;
+	box-shadow: $shadow;
+}
+
 // Header
-ion-header {
-	ion-toolbar {
-		--background: var(--ion-background-color);
-		--border-color: transparent;
-		--padding-top: 8px;
-		--padding-bottom: 8px;
-	}
+ion-header ion-toolbar {
+	--background: $background-color;
+	--border-color: transparent;
+	--padding-top: 8px;
+	--padding-bottom: 8px;
 
 	ion-title {
 		font-size: 1.25rem;
@@ -26,16 +31,16 @@ ion-header {
 	}
 
 	.avatar-button {
-		--background: var(--ion-color-primary);
+		--background: $primary-color;
 		--background-hover: var(--ion-color-primary-shade);
 		--background-activated: var(--ion-color-primary-shade);
 		--border-radius: 50%;
 		width: 40px;
 		height: 40px;
-		margin: 0 8px;
-		font-size: 1rem;
 		color: var(--ion-color-primary-contrast);
-		transition: transform 0.2s ease, box-shadow 0.2s ease;
+		font-size: 1rem;
+		margin: 0 8px;
+		transition: transform 0.2s, box-shadow 0.2s;
 
 		&:hover {
 			transform: translateY(-1px);
@@ -47,6 +52,7 @@ ion-header {
 	}
 }
 
+// Layout Grid
 ion-grid {
 	max-width: $container-width;
 	margin: 0 auto;
@@ -54,13 +60,13 @@ ion-grid {
 }
 
 ion-row {
-	margin: -$spacing/2;
+	margin: -$spacing / 2;
 	display: flex;
 	justify-content: center;
 }
 
 ion-col {
-	padding: $spacing/2;
+	padding: $spacing / 2;
 	display: flex;
 	justify-content: center;
 }
@@ -69,18 +75,16 @@ ion-col {
 .section-title {
 	font-size: 1.5rem;
 	font-weight: 600;
-	margin: $spacing*2 auto $spacing;
-	color: $text-color;
+	margin: $spacing * 2 auto $spacing;
 	text-align: center;
+	color: $text-color;
 	max-width: $container-width;
 	padding: 0 $spacing;
 }
 
 // Add Sections
 .add-section {
-	background: $card-background;
-	border-radius: $border-radius;
-	box-shadow: $shadow;
+	@extend .card;
 	padding: $spacing;
 	margin: $spacing auto;
 	max-width: $container-width;
@@ -94,21 +98,18 @@ ion-col {
 
 	&.add-todo {
 		display: flex;
-		gap: $spacing;
 		align-items: center;
-		max-width: $container-width;
+		gap: $spacing;
 	}
 }
 
-// Project Cards
+// Project Card
 .project-card {
-	background: $card-background;
-	border-radius: $border-radius;
-	box-shadow: $shadow;
+	@extend .card;
 	width: 100%;
 	max-width: $card-width;
-	transition: transform 0.2s, box-shadow 0.2s;
 	cursor: pointer;
+	transition: transform 0.2s, box-shadow 0.2s;
 
 	&:hover {
 		transform: translateY(-2px);
@@ -126,14 +127,14 @@ ion-col {
 		h3 {
 			font-size: 1.1rem;
 			font-weight: 600;
-			margin: 0 0 $spacing/2;
+			margin-bottom: $spacing / 2;
 			color: $text-color;
 		}
 
 		.description {
 			font-size: 0.875rem;
 			color: $medium-color;
-			margin: 0 0 $spacing;
+			margin-bottom: $spacing;
 			line-height: 1.4;
 		}
 
@@ -153,7 +154,6 @@ ion-col {
 				font-size: 0.75rem;
 				font-weight: 500;
 				color: $medium-color;
-				white-space: nowrap;
 			}
 		}
 	}
@@ -171,7 +171,7 @@ ion-col {
 
 		.actions {
 			display: flex;
-			gap: $spacing/2;
+			gap: $spacing / 2;
 
 			ion-button {
 				--padding-start: 8px;
@@ -189,15 +189,13 @@ ion-col {
 
 // Todo Items
 .todo-item {
-	background: $card-background;
-	border-radius: $border-radius;
-	box-shadow: $shadow;
-	padding: $spacing;
-	margin: 8 auto;
-	max-width: $container-width;
+	@extend .card;
 	display: flex;
 	align-items: center;
 	gap: $spacing;
+	padding: $spacing;
+	margin: 8 auto;
+	max-width: $container-width;
 	transition: transform 0.2s, box-shadow 0.2s;
 
 	&:hover {
@@ -219,12 +217,11 @@ ion-col {
 
 	ion-label {
 		flex: 1;
-		margin: 0;
 
 		h2 {
 			font-size: 1rem;
 			font-weight: 500;
-			margin: 0 0 $spacing/4;
+			margin-bottom: $spacing / 4;
 			color: $text-color;
 
 			&.line-through {
@@ -236,7 +233,6 @@ ion-col {
 		p {
 			font-size: 0.75rem;
 			color: $medium-color;
-			margin: 0;
 		}
 	}
 
@@ -265,13 +261,12 @@ ion-col {
 
 	.actions {
 		display: flex;
-		gap: $spacing/2;
+		gap: $spacing / 2;
 
 		ion-button {
 			--padding-start: 8px;
 			--padding-end: 8px;
 			height: 32px;
-			margin: 0;
 
 			ion-icon {
 				font-size: 20px;
@@ -282,21 +277,18 @@ ion-col {
 
 // Todo Stats
 .todo-stats {
+	@extend .card;
 	display: flex;
 	gap: $spacing;
 	margin: $spacing auto;
 	padding: $spacing;
-	background: $card-background;
-	border-radius: $border-radius;
-	box-shadow: $shadow;
-	max-width: $container-width;
 
 	.stat-item {
 		flex: 1;
 		display: flex;
 		align-items: center;
-		gap: $spacing/2;
-		padding: $spacing/2;
+		gap: $spacing / 2;
+		padding: $spacing / 2;
 		border-radius: $border-radius;
 		transition: transform 0.2s;
 
@@ -306,7 +298,7 @@ ion-col {
 
 		ion-icon {
 			font-size: 1.5rem;
-			padding: $spacing/2;
+			padding: $spacing / 2;
 			border-radius: $border-radius;
 			background: rgba(255, 255, 255, 0.1);
 		}
@@ -332,42 +324,58 @@ ion-col {
 
 		&.new {
 			background: var(--ion-color-warning-tint);
-			ion-icon { color: var(--ion-color-warning); }
-			.stat-value { color: var(--ion-color-warning-contrast); }
-			.stat-label { color: var(--ion-color-warning-contrast); }
+
+			ion-icon,
+			.stat-value,
+			.stat-label {
+				color: var(--ion-color-warning-contrast);
+			}
 		}
 
 		&.in-progress {
 			background: var(--ion-color-warning);
-			ion-icon { color: var(--ion-color-warning-contrast); }
-			.stat-value { color: var(--ion-color-warning-contrast); }
-			.stat-label { color: var(--ion-color-warning-contrast); }
+
+			ion-icon,
+			.stat-value,
+			.stat-label {
+				color: var(--ion-color-warning-contrast);
+			}
 		}
 
 		&.done {
 			background: var(--ion-color-success);
-			ion-icon { color: var(--ion-color-success-contrast); }
-			.stat-value { color: var(--ion-color-success-contrast); }
-			.stat-label { color: var(--ion-color-success-contrast); }
+
+			ion-icon,
+			.stat-value,
+			.stat-label {
+				color: var(--ion-color-success-contrast);
+			}
 		}
 
 		&.total {
 			background: var(--ion-color-light);
-			ion-icon { color: var(--ion-color-primary); }
-			.stat-value { color: var(--ion-color-dark); }
-			.stat-label { color: var(--ion-color-medium); }
+
+			ion-icon {
+				color: var(--ion-color-primary);
+			}
+
+			.stat-value {
+				color: var(--ion-color-dark);
+			}
+
+			.stat-label {
+				color: var(--ion-color-medium);
+			}
 		}
 	}
 }
 
 // Empty State
 .empty-state {
+	@extend .card;
 	text-align: center;
-	padding: $spacing*3;
-	background: $card-background;
-	border-radius: $border-radius;
-	box-shadow: $shadow;
-	margin: $spacing*2 auto;
+	padding: $spacing * 3;
+	margin: $spacing * 2 auto;
 	max-width: $container-width;
 
 	ion-icon {
@@ -379,27 +387,24 @@ ion-col {
 	h3 {
 		font-size: 1.25rem;
 		font-weight: 600;
-		margin-bottom: $spacing/2;
+		margin-bottom: $spacing / 2;
 		color: $text-color;
 	}
 
 	p {
 		font-size: 0.875rem;
 		color: $medium-color;
-		margin: 0;
 	}
 }
 
 // User Dropdown
 .user-dropdown {
-	background: $card-background;
-	border-radius: $border-radius;
-	box-shadow: $shadow;
-	padding: $spacing/2;
+	@extend .card;
 	position: absolute;
 	top: 0;
 	right: $spacing;
 	z-index: 1000;
+	padding: $spacing / 2;
 
 	ion-item {
 		--padding-start: $spacing;
@@ -415,15 +420,16 @@ ion-col {
 
 // Responsive
 @media (max-width: 1200px) {
-	$container-width: 100%;
+	:root {
+		--container-width: 100%;
+	}
+
 	$card-width: 320px;
 }
 
 @media (max-width: 768px) {
-	.add-section {
-		&.add-project {
-			grid-template-columns: 1fr;
-		}
+	.add-section.add-project {
+		grid-template-columns: 1fr;
 	}
 
 	.todo-stats {
@@ -431,7 +437,7 @@ ion-col {
 	}
 
 	.user-dropdown {
-		right: $spacing/2;
+		right: $spacing / 2;
 		width: calc(100% - #{$spacing});
 	}
 }
@@ -442,13 +448,12 @@ ion-col {
 	}
 
 	.todo-item {
-		padding: $spacing;
 		flex-wrap: wrap;
 
 		.actions {
 			width: 100%;
 			justify-content: flex-end;
-			margin-top: $spacing/2;
+			margin-top: $spacing / 2;
 		}
 	}
 }
