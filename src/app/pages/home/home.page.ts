@@ -30,6 +30,8 @@ import {
 	IonProgressBar,
 	IonSearchbar,
 	IonModal,
+	IonFab,
+	IonFabButton,
 } from '@ionic/angular/standalone';
 
 
@@ -62,6 +64,8 @@ import {
 		IonInput,
 		IonTextarea,
 		IonModal,
+		IonFab,
+		IonFabButton,
 	],
 })
 export class HomePage implements OnInit {
@@ -89,6 +93,17 @@ export class HomePage implements OnInit {
 	newTodoTitle = '';
 	editingTodo: Todo | null = null;
 	editTodoTitle = '';
+
+	// Add state for showing FAB forms
+	showAddProject = false;
+	showAddTodo = false;
+	showAddProjectModal = false;
+	showAddTodoModal = false;
+
+	// State for todo actions popover
+	todoActionsPopoverOpen = false;
+	todoActionsEvent: any = null;
+	selectedTodo: Todo | null = null;
 
 	constructor(
 		private auth: AuthService,
@@ -377,6 +392,18 @@ export class HomePage implements OnInit {
 
 	get doneTodosCount(): number {
 		return this.todos.filter(t => t.status === 'done').length;
+	}
+
+	presentTodoActions(event: Event, todo: Todo) {
+		this.todoActionsPopoverOpen = true;
+		this.todoActionsEvent = event;
+		this.selectedTodo = todo;
+	}
+
+	closeTodoActions() {
+		this.todoActionsPopoverOpen = false;
+		this.todoActionsEvent = null;
+		this.selectedTodo = null;
 	}
 
 }

@@ -7,7 +7,7 @@
 		</ion-buttons>
 		<ion-title class="ion-text-center">{{ viewState === 'projects' ? 'Projects' : selectedProject?.name }}</ion-title>
 		<ion-buttons slot="end">
-			<ion-button shape="round" class="avatar-button" (click)="openUserMenu($event)">
+			<ion-button class="avatar-button" (click)="openUserMenu($event)">
 				{{ userInitials }}
 			</ion-button>
 		</ion-buttons>
@@ -18,17 +18,6 @@
 	<!-- Projects View -->
 	<div *ngIf="viewState === 'projects'" class="projects-view">
 		<ion-searchbar [(ngModel)]="projectSearch" placeholder="Search projects..." mode="ios" animated></ion-searchbar>
-
-		<div class="add-section add-project">
-			<ion-input [(ngModel)]="newProjectName" placeholder="New project name..."
-				(ionChange)="newProjectName = $event.detail.value || ''"></ion-input>
-			<ion-textarea [(ngModel)]="newProjectDescription" placeholder="Project description (optional)"
-				rows="2"></ion-textarea>
-			<ion-button (click)="addProject()" [disabled]="!newProjectName.trim()">
-				<ion-icon name="add"></ion-icon>
-				Add Project
-			</ion-button>
-		</div>
 
 		<!-- Active Projects -->
 		<ion-grid>
@@ -88,6 +77,36 @@
 				</ion-col>
 			</ion-row>
 		</ion-grid>
+
+		<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+			<ion-fab-button color="warning" (click)="showAddProjectModal = true">
+				<ion-icon name="add"></ion-icon>
+			</ion-fab-button>
+		</ion-fab>
+
+		<ion-modal mode="ios" [isOpen]="showAddProjectModal" (didDismiss)="showAddProjectModal = false">
+			<ng-template>
+				<ion-header>
+					<ion-toolbar>
+						<ion-title>New Project</ion-title>
+						<ion-buttons slot="end">
+							<ion-button (click)="showAddProjectModal = false">Cancel</ion-button>
+						</ion-buttons>
+					</ion-toolbar>
+				</ion-header>
+				<ion-content class="ion-padding">
+					<div class="add-section add-project">
+						<ion-input [(ngModel)]="newProjectName" placeholder="Project name"
+							(ionChange)="newProjectName = $event.detail.value || ''"></ion-input>
+						<ion-textarea [(ngModel)]="newProjectDescription" placeholder="Project description (optional)"
+							rows="2"></ion-textarea>
+						<ion-button expand="block" (click)="addProject(); showAddProjectModal = false;" [disabled]="!newProjectName.trim()">
+							Add Project
+						</ion-button>
+					</div>
+				</ion-content>
+			</ng-template>
+		</ion-modal>
 	</div>
 
 	<!-- Todos View -->
@@ -95,42 +114,62 @@
 
 		<div class="todo-stats">
 			<div class="stat-item total">
-				<ion-icon name="list"></ion-icon>
+				<ion-icon name="list-outline"></ion-icon>
 				<div class="stat-content">
 					<div class="stat-value">{{ todos.length }}</div>
 					<div class="stat-label">Total</div>
 				</div>
 			</div>
 			<div class="stat-item new">
-				<ion-icon name="time"></ion-icon>
+				<ion-icon name="time-outline"></ion-icon>
 				<div class="stat-content">
 					<div class="stat-value">{{ newTodosCount }}</div>
 					<div class="stat-label">New</div>
 				</div>
 			</div>
 			<div class="stat-item in-progress">
-				<ion-icon name="hourglass"></ion-icon>
+				<ion-icon name="hourglass-outline"></ion-icon>
 				<div class="stat-content">
 					<div class="stat-value">{{ inProgressTodosCount }}</div>
 					<div class="stat-label">In Progress</div>
 				</div>
 			</div>
 			<div class="stat-item done">
-				<ion-icon name="checkmark-circle"></ion-icon>
+				<ion-icon name="checkmark-circle-outline"></ion-icon>
 				<div class="stat-content">
 					<div class="stat-value">{{ doneTodosCount }}</div>
 					<div class="stat-label">Done</div>
 				</div>
 			</div>
 		</div>
-		<div class="add-section add-todo">
-			<ion-input [(ngModel)]="newTodoTitle" placeholder="New todo..."
-				(ionChange)="newTodoTitle = $event.detail.value || ''"></ion-input>
-			<ion-button (click)="addTodo()" [disabled]="!newTodoTitle.trim()">
+
+		<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+			<ion-fab-button color="warning" (click)="showAddTodoModal = true">
 				<ion-icon name="add"></ion-icon>
-				Add Todo
-			</ion-button>
-		</div>
+			</ion-fab-button>
+		</ion-fab>
+
+		<ion-modal mode="ios" [isOpen]="showAddTodoModal" (didDismiss)="showAddTodoModal = false">
+			<ng-template>
+				<ion-header>
+					<ion-toolbar>
+						<ion-title>New Todo</ion-title>
+						<ion-buttons slot="end">
+							<ion-button (click)="showAddTodoModal = false">Cancel</ion-button>
+						</ion-buttons>
+					</ion-toolbar>
+				</ion-header>
+				<ion-content class="ion-padding">
+					<div class="add-section add-todo">
+						<ion-input [(ngModel)]="newTodoTitle" placeholder="Todo title"
+							(ionChange)="newTodoTitle = $event.detail.value || ''"></ion-input>
+						<ion-button expand="block" (click)="addTodo(); showAddTodoModal = false;" [disabled]="!newTodoTitle.trim()">
+							Add Todo
+						</ion-button>
+					</div>
+				</ion-content>
+			</ng-template>
+		</ion-modal>
 
 		<!-- Active Todos -->
 		<div *ngIf="todos.length === 0" class="empty-state">
@@ -149,19 +188,16 @@
 						<ion-badge class="status-badge" [class]="todo.status">
 							{{ todo.status }}
 						</ion-badge>
-						<div class="actions">
-							<ion-button fill="clear" (click)="cycleStatus(todo)">
-								<ion-icon [name]="todo.status === 'done' ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
-							</ion-button>
-							<ion-button fill="clear" (click)="editT(todo)">
-								<ion-icon name="create"></ion-icon>
-							</ion-button>
-							<ion-button fill="clear" (click)="archiveTodo(todo.id)">
-								<ion-icon name="archive"></ion-icon>
-							</ion-button>
-							<ion-button fill="clear" (click)="deleteTodo(todo.id)">
-								<ion-icon name="trash"></ion-icon>
-							</ion-button>
+						<ion-button fill="clear" size="small" class="actions-menu" (click)="todo.showActions = !todo.showActions">
+							<ion-icon name="ellipsis-vertical"></ion-icon>
+						</ion-button>
+						<div class="todo-actions-dropdown" *ngIf="todo.showActions">
+							<ion-list>
+								<ion-item button (click)="cycleStatus(todo); todo.showActions = false"><ion-icon slot="start" [name]="todo.status === 'done' ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>Change Status</ion-item>
+								<ion-item button (click)="editT(todo); todo.showActions = false"><ion-icon slot="start" name="create"></ion-icon>Edit</ion-item>
+								<ion-item button (click)="archiveTodo(todo.id); todo.showActions = false"><ion-icon slot="start" name="archive"></ion-icon>Archive</ion-item>
+								<ion-item button (click)="deleteTodo(todo.id); todo.showActions = false"><ion-icon slot="start" name="trash"></ion-icon>Delete</ion-item>
+							</ion-list>
 						</div>
 					</div>
 				</ion-col>
@@ -253,10 +289,10 @@
 				<div class="add-section add-todo">
 					<ion-input [(ngModel)]="editTodoTitle" placeholder="Todo title"
 						(ionChange)="editTodoTitle = $event.detail.value || ''"></ion-input>
+					</div>
 					<ion-button expand="block" (click)="updateTodo()" [disabled]="!editTodoTitle.trim()">
 						Save Changes
 					</ion-button>
-				</div>
 			</ion-content>
 		</ng-template>
 	</ion-modal>

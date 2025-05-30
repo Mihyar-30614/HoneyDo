@@ -4,8 +4,8 @@
 	"description": "HoneyDoList helps you stay productive across all platforms with a sweet and simple interface.",
 	"start_url": "/",
 	"display": "standalone",
-	"theme_color": "#fdc700",
-	"background_color": "#ffffff",
+	"theme_color": "#fffaf0",
+	"background_color": "#fffaf0",
 	"orientation": "portrait",
 	"icons": [
 	  {

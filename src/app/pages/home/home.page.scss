@@ -19,10 +19,6 @@ $card-width: 360px;
 
 // Header
 ion-header ion-toolbar {
-	--background: $background-color;
-	--border-color: transparent;
-	--padding-top: 8px;
-	--padding-bottom: 8px;
 
 	ion-title {
 		font-size: 1.25rem;
@@ -31,13 +27,11 @@ ion-header ion-toolbar {
 	}
 
 	.avatar-button {
-		--background: $primary-color;
-		--background-hover: var(--ion-color-primary-shade);
-		--background-activated: var(--ion-color-primary-shade);
-		--border-radius: 50%;
+		background: $primary-color;
+		border-radius: 50%;
 		width: 40px;
 		height: 40px;
-		color: var(--ion-color-primary-contrast);
+		--color: var(--ion-color-primary-contrast);
 		font-size: 1rem;
 		margin: 0 8px;
 		transition: transform 0.2s, box-shadow 0.2s;
@@ -52,13 +46,6 @@ ion-header ion-toolbar {
 	}
 }
 
-// Layout Grid
-ion-grid {
-	max-width: $container-width;
-	margin: 0 auto;
-	padding: $spacing;
-}
-
 ion-row {
 	margin: -$spacing / 2;
 	display: flex;
@@ -69,6 +56,10 @@ ion-col {
 	padding: $spacing / 2;
 	display: flex;
 	justify-content: center;
+}
+
+h2, ion-label{
+	user-select: none;
 }
 
 // Section Titles
@@ -195,8 +186,9 @@ ion-col {
 	gap: $spacing;
 	padding: $spacing;
 	margin: 8 auto;
-	max-width: $container-width;
+	width: $container-width;
 	transition: transform 0.2s, box-shadow 0.2s;
+	position: relative;
 
 	&:hover {
 		transform: translateX(4px);
@@ -242,6 +234,7 @@ ion-col {
 		font-size: 0.75rem;
 		font-weight: 500;
 		text-transform: capitalize;
+		user-select: none;
 
 		&.new {
 			background: var(--ion-color-warning-tint);
@@ -273,6 +266,64 @@ ion-col {
 			}
 		}
 	}
+
+	.todo-actions-dropdown {
+		position: absolute;
+		top: 85%;
+		right: 7%;
+		transform: translateY(-50%);
+		z-index: 2000;
+		min-width: unset;
+		min-height: 36px;
+		padding: 0 8px;
+		border-radius: 8px;
+		box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+		background: var(--ion-background-color, #fff);
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 8px;
+		animation: fadeInDropdown 0.15s;
+
+		ion-list {
+			padding: 0;
+			background: transparent;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: 8px;
+		}
+
+		ion-item {
+			--padding-start: 8px;
+			--inner-padding-end: 8px;
+			--min-height: 30px;
+			font-size: 14px;
+			--background: transparent;
+			display: flex;
+			align-items: center;
+			height: 32px;
+			margin: 0;
+			border-radius: 6px;
+			transition: background 0.15s;
+			border: none;
+			min-width: 0;
+
+			&:hover, &:focus {
+				background: var(--ion-color-light, #f6f6f6);
+			}
+
+			ion-icon {
+				font-size: 16px;
+				margin-right: 6px;
+			}
+		}
+	}
+
+	@keyframes fadeInDropdown {
+		from { opacity: 0; transform: translateY(-8px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
 }
 
 // Todo Stats
@@ -280,7 +331,7 @@ ion-col {
 	@extend .card;
 	display: flex;
 	gap: $spacing;
-	margin: $spacing auto;
+	margin: $spacing 5px;
 	padding: $spacing;
 
 	.stat-item {
@@ -354,18 +405,7 @@ ion-col {
 
 		&.total {
 			background: var(--ion-color-light);
-
-			ion-icon {
-				color: var(--ion-color-primary);
-			}
-
-			.stat-value {
-				color: var(--ion-color-dark);
-			}
-
-			.stat-label {
-				color: var(--ion-color-medium);
-			}
+			color: var(--ion-color-dark);
 		}
 	}
 }
