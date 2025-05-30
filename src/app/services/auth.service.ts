@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, authState, signOut, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from '@angular/fire/auth';
-import { Observable } from 'rxjs';
+import { Auth, authState, signOut, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from '@angular/fire/auth';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -40,5 +40,28 @@ export class AuthService {
 
 	logout(): Promise<void> {
 		return signOut(this.auth);
+	}
+
+	updateProfile(data: { displayName?: string }) {
+		const user = this.auth.currentUser;
+		if (!user) throw new Error('No user logged in');
+
+		return updateProfile(user, data);
+	}
+
+	async updatePassword(currentPassword: string, newPassword: string) {
+		const user = this.auth.currentUser;
+		if (!user || !user.email) throw new Error('No user logged in');
+
+		try {
+			// Re-authenticate user before changing password
+			const credential = EmailAuthProvider.credential(user.email, currentPassword);
+			await reauthenticateWithCredential(user, credential);
+
+			// Update password
+			await updatePassword(user, newPassword);
+		} catch (error) {
+			throw error;
+		}
 	}
 }

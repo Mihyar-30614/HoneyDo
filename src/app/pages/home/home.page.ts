@@ -29,38 +29,51 @@ import {
 	IonSearchbar,
 	IonModal,
 	IonFab,
-	IonFabButton, IonCardTitle, IonCard, IonCardSubtitle, IonCardContent, IonCardHeader } from '@ionic/angular/standalone';
-
+	IonFabButton,
+	IonCardTitle,
+	IonCard,
+	IonCardSubtitle,
+	IonCardContent,
+	IonCardHeader,
+	IonAlert
+} from '@ionic/angular/standalone';
+import { AlertController } from '@ionic/angular';
 
 @Component({
 	selector: 'app-home',
 	templateUrl: './home.page.html',
 	styleUrls: ['./home.page.scss'],
 	standalone: true,
-	imports: [IonCardHeader, IonCardContent, IonCard, IonCardTitle,
-    CommonModule,
-    FormsModule,
-    ProjectFilterPipe,
-    IonTitle,
-    IonProgressBar,
-    IonCol,
-    IonRow,
-    IonGrid,
-    IonLabel,
-    IonIcon,
-    IonItem,
-    IonList,
-    IonButtons,
-    IonHeader,
-    IonToolbar,
-    IonContent,
-    IonButton,
-    IonSearchbar,
-    IonInput,
-    IonTextarea,
-    IonModal,
-    IonFab,
-    IonFabButton],
+	imports: [
+		IonAlert,
+		IonCardHeader,
+		IonCardContent,
+		IonCard,
+		IonCardTitle,
+		CommonModule,
+		FormsModule,
+		ProjectFilterPipe,
+		IonTitle,
+		IonProgressBar,
+		IonCol,
+		IonRow,
+		IonGrid,
+		IonLabel,
+		IonIcon,
+		IonItem,
+		IonList,
+		IonButtons,
+		IonHeader,
+		IonToolbar,
+		IonContent,
+		IonButton,
+		IonSearchbar,
+		IonInput,
+		IonTextarea,
+		IonModal,
+		IonFab,
+		IonFabButton
+	],
 })
 export class HomePage implements OnInit {
 	user: User | null = null;
@@ -85,7 +98,8 @@ export class HomePage implements OnInit {
 	constructor(
 		private auth: AuthService,
 		private data: DataService,
-		private router: Router
+		private router: Router,
+		private alertController: AlertController
 	) { }
 
 	ngOnInit(): void {
@@ -136,8 +150,8 @@ export class HomePage implements OnInit {
 	}
 
 	editProfile(): void {
-		// Implement profile editing logic or navigation here
-		alert('Edit Profile clicked!');
+		this.router.navigate(['/profile']);
+		this.closeUserMenu();
 	}
 
 	logout(): void { this.auth.logout().then(() => this.router.navigate(['/login'])); }
@@ -264,6 +278,39 @@ export class HomePage implements OnInit {
 		this.data.updateProject(id, updateData, this.user.uid)
 			.catch(error => {
 				console.error('Error unarchiving project:', error);
+			});
+	}
+
+	async confirmDelete(project: Project) {
+		const alert = await this.alertController.create({
+			header: 'Delete Project',
+			message: `Are you sure you want to delete "${project.name}"? This action cannot be undone.`,
+			buttons: [
+				{
+					text: 'Cancel',
+					role: 'cancel',
+					cssClass: 'secondary'
+				},
+				{
+					text: 'Delete',
+					role: 'destructive',
+					handler: () => {
+						this.deleteProject(project.id);
+					}
+				}
+			]
+		});
+
+		await alert.present();
+	}
+
+	private deleteProject(id: string): void {
+		this.data.deleteProject(id)
+			.then(() => {
+				// Project will be removed from the list automatically through the subscription
+			})
+			.catch(error => {
+				console.error('Error deleting project:', error);
 			});
 	}
 }

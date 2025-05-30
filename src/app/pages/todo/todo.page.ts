@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '@angular/fire/auth';
 import { AuthService } from '../../services/auth.service';
@@ -8,7 +8,37 @@ import { Project } from '../../models/project.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrderByPipe } from '../../pipes/order-by.pipe';
-import { IonBadge, IonTitle, IonProgressBar, IonCol, IonRow, IonGrid, IonLabel, IonIcon, IonItem, IonList, IonButtons, IonHeader, IonToolbar, IonContent, IonButton, IonSearchbar, IonInput, IonTextarea, IonModal, IonFab, IonFabButton } from '@ionic/angular/standalone';
+import { Subscription } from 'rxjs';
+import {
+  IonBadge,
+  IonTitle,
+  IonProgressBar,
+  IonCol,
+  IonRow,
+  IonGrid,
+  IonLabel,
+  IonIcon,
+  IonItem,
+  IonList,
+  IonButtons,
+  IonHeader,
+  IonToolbar,
+  IonContent,
+  IonButton,
+  IonSearchbar,
+  IonInput,
+  IonTextarea,
+  IonModal,
+  IonFab,
+  IonFabButton,
+  IonCard,
+  IonCardContent,
+  IonCheckbox,
+  IonItemGroup,
+  IonItemDivider,
+  IonPopover,
+  IonCardTitle
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-todo',
@@ -40,9 +70,17 @@ import { IonBadge, IonTitle, IonProgressBar, IonCol, IonRow, IonGrid, IonLabel, 
     IonModal,
     IonFab,
     IonFabButton,
+    IonCard,
+    IonCardContent,
+    IonCheckbox,
+    IonItemGroup,
+    IonItemDivider,
+    IonPopover,
+    IonCardTitle
   ],
 })
-export class TodoPage implements OnInit {
+export class TodoPage implements OnInit, OnDestroy {
+  // User and project data
   user: User | null = null;
   project: Project | null = null;
   todos: Todo[] = [];
@@ -54,6 +92,11 @@ export class TodoPage implements OnInit {
   editingTodo: Todo | null = null;
   editTodoTitle = '';
   showAddTodoModal = false;
+  selectedTodo: Todo | null = null;
+
+  // Subscriptions
+  private authSubscription: Subscription | null = null;
+  private routeSubscription: Subscription | null = null;
 
   constructor(
     private auth: AuthService,
@@ -63,49 +106,80 @@ export class TodoPage implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.auth.user$.subscribe(u => {
+    this.initializeAuth();
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupSubscriptions();
+  }
+
+  // Keyboard shortcuts
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    if ((event.ctrlKey || event.metaKey) && event.key === '/') {
+      event.preventDefault();
+      this.showAddTodoModal = true;
+    }
+  }
+
+  // Initialization
+  private initializeAuth(): void {
+    this.authSubscription = this.auth.user$.subscribe(u => {
       if (!u) {
         this.router.navigate(['/login']);
       } else {
         this.user = u;
-        this.route.paramMap.subscribe(params => {
-          const projectId = params.get('projectId');
-          if (projectId) {
-            this.loadProject(projectId);
-            this.loadTodos(projectId);
-          }
-        });
+        this.initializeProject();
       }
     });
   }
 
-  loadProject(projectId: string): void {
-    // Optionally, fetch project details from a service if needed
-    // For now, just set a placeholder with the id
+  private initializeProject(): void {
+    this.routeSubscription = this.route.paramMap.subscribe(params => {
+      const projectId = params.get('projectId');
+      if (projectId) {
+        this.loadProject(projectId);
+        this.loadTodos(projectId);
+      }
+    });
+  }
+
+  private cleanupSubscriptions(): void {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
+  }
+
+  // Data loading
+  private loadProject(projectId: string): void {
     this.project = { id: projectId, name: '', ownerId: '', archived: false };
-    // If you want to show project name, you can fetch it from DataService
     this.data.getProjects(this.user!.uid).subscribe(projects => {
       const found = projects.find(p => p.id === projectId);
       if (found) this.project = found;
     });
   }
 
-  loadTodos(projectId: string): void {
+  private loadTodos(projectId: string): void {
     this.data.getTodos(projectId).subscribe(list => {
       this.todos = list.filter(t => !t.archived);
       this.archivedTodos = list.filter(t => t.archived);
+      this.loading = false;
     });
   }
 
+  // Todo actions
   addTodo(): void {
     if (!this.newTodoTitle.trim() || !this.project) return;
     this.data.addTodo(this.newTodoTitle, this.project.id, 'new')
       .then(() => this.newTodoTitle = '');
   }
 
-  editT(t: Todo): void {
-    this.editingTodo = t;
-    this.editTodoTitle = t.title;
+  editT(todo: Todo): void {
+    this.editingTodo = todo;
+    this.editTodoTitle = todo.title;
   }
 
   updateTodo(): void {
@@ -134,18 +208,18 @@ export class TodoPage implements OnInit {
     this.data.deleteTodo(id);
   }
 
-  updateTodoStatus(t: Todo): void {
-    this.data.updateTodo(t.id, { status: t.status });
-  }
-
-  cycleStatus(t: Todo): void {
+  cycleStatus(todo: Todo): void {
     const order: ('new' | 'in-progress' | 'done')[] = ['new', 'in-progress', 'done'];
-    const currentIndex = order.indexOf(t.status);
-    const nextStatus: 'new' | 'in-progress' | 'done' = order[(currentIndex + 1) % order.length];
-    t.status = nextStatus;
-    this.data.updateTodo(t.id, { status: nextStatus });
+    const currentIndex = order.indexOf(todo.status);
+    const nextStatus = order[(currentIndex + 1) % order.length];
+    this.data.updateTodo(todo.id, { status: nextStatus });
   }
 
+  openTodoActions(todo: Todo): void {
+    this.selectedTodo = todo;
+  }
+
+  // Getters for todo counts
   get doneTodosCount(): number {
     return this.todos.filter(t => t.status === 'done').length;
   }

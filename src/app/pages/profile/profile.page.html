@@ -1,0 +1,111 @@
+<ion-header class="ion-no-border">
+	<ion-toolbar>
+		<ion-buttons slot="start">
+			<ion-button (click)="router.navigate(['/home'])">
+				<ion-icon name="arrow-back"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+		<ion-title class="ion-text-center">Profile</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content>
+	<div class="profile-container">
+		<!-- Profile Header -->
+		<ion-card class="profile-header">
+			<ion-card-content>
+				<div class="avatar-container">
+					<div class="avatar">{{ userInitials }}</div>
+				</div>
+				<div class="profile-info">
+					<h2 *ngIf="!isEditing">{{ displayName || 'Set your name' }}</h2>
+					<ion-item *ngIf="isEditing" class="edit-name">
+						<ion-input [(ngModel)]="displayName" placeholder="Your name" label="Display Name"
+							labelPlacement="floating" inputmode="text" autocorrect="on" spellcheck="true"
+							autocomplete="on">
+						</ion-input>
+					</ion-item>
+					<ion-note>{{ email }}</ion-note>
+				</div>
+			</ion-card-content>
+		</ion-card>
+
+		<!-- Profile Actions -->
+		<ion-list>
+			<ion-item button detail="false" (click)="startEditing()" *ngIf="!isEditing">
+				<ion-icon name="create-outline" slot="start"></ion-icon>
+				<ion-label>Edit Profile</ion-label>
+			</ion-item>
+
+			<ion-item *ngIf="isEditing">
+				<ion-button slot="start" fill="clear" (click)="cancelEdit()">
+					<ion-icon name="close-outline"></ion-icon>
+				</ion-button>
+				<ion-button slot="end" fill="clear" (click)="updateProfile()" [disabled]="!displayName.trim()">
+					<ion-icon name="checkmark-outline"></ion-icon>
+				</ion-button>
+			</ion-item>
+
+			<ion-item button detail="false" (click)="showPasswordUpdateForm()" *ngIf="!showPasswordUpdate">
+				<ion-icon name="key-outline" slot="start"></ion-icon>
+				<ion-label>Change Password</ion-label>
+			</ion-item>
+
+			<ion-item *ngIf="showPasswordUpdate">
+				<ion-label position="stacked">Current Password</ion-label>
+				<ion-input type="password" [(ngModel)]="currentPassword"
+					placeholder="Enter current password"></ion-input>
+			</ion-item>
+
+			<ion-item *ngIf="showPasswordUpdate">
+				<ion-label position="stacked">New Password</ion-label>
+				<ion-input type="password" [(ngModel)]="newPassword" placeholder="Enter new password"></ion-input>
+			</ion-item>
+
+			<ion-item *ngIf="showPasswordUpdate">
+				<ion-label position="stacked">Confirm New Password</ion-label>
+				<ion-input type="password" [(ngModel)]="confirmPassword" placeholder="Confirm new password"></ion-input>
+			</ion-item>
+
+			<ion-item *ngIf="showPasswordUpdate">
+				<ion-button slot="start" fill="clear" (click)="cancelPasswordUpdate()">
+					<ion-icon name="close-outline"></ion-icon>
+				</ion-button>
+				<ion-button slot="end" fill="clear" (click)="updatePassword()"
+					[disabled]="!currentPassword || !newPassword || !confirmPassword">
+					<ion-icon name="checkmark-outline"></ion-icon>
+				</ion-button>
+			</ion-item>
+
+			<ion-item *ngIf="passwordError" color="danger">
+				<ion-label>{{ passwordError }}</ion-label>
+			</ion-item>
+
+			<ion-item button detail="false" (click)="logout()">
+				<ion-icon name="log-out-outline" slot="start"></ion-icon>
+				<ion-label color="danger">Logout</ion-label>
+			</ion-item>
+		</ion-list>
+
+		<!-- Account Info -->
+		<ion-card>
+			<ion-card-header>
+				<ion-card-title>Account Information</ion-card-title>
+			</ion-card-header>
+			<ion-card-content>
+				<ion-grid>
+					<ion-row>
+						<ion-col size="6">
+							<ion-text color="medium">Email</ion-text>
+							<p>{{ email }}</p>
+						</ion-col>
+						<ion-col size="6">
+							<ion-text color="medium">Account Created</ion-text>
+							<p>{{ user?.metadata?.creationTime | date:'mediumDate' }}</p>
+						</ion-col>
+					</ion-row>
+				</ion-grid>
+			</ion-card-content>
+		</ion-card>
+	</div>
+</ion-content>

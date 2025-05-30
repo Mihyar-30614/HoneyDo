@@ -46,9 +46,11 @@
 							<ion-button fill="clear" size="small" (click)="editProj(project); $event.stopPropagation()">
 								<ion-icon name="create-outline"></ion-icon>
 							</ion-button>
-							<ion-button fill="clear" size="small"
-								(click)="archiveProject(project.id); $event.stopPropagation()">
+							<ion-button fill="clear" size="small" (click)="archiveProject(project.id); $event.stopPropagation()">
 								<ion-icon name="archive-outline"></ion-icon>
+							</ion-button>
+							<ion-button fill="clear" size="small" (click)="confirmDelete(project); $event.stopPropagation()">
+								<ion-icon name="trash-outline"></ion-icon>
 							</ion-button>
 						</div>
 					</div>
@@ -87,6 +89,9 @@
 								<ion-icon name="refresh"></ion-icon>
 								Unarchive
 							</ion-button>
+							<ion-button fill="clear" size="small" (click)="confirmDelete(project)">
+								<ion-icon name="trash-outline"></ion-icon>
+							</ion-button>
 						</div>
 					</div>
 				</ion-card>
@@ -113,12 +118,33 @@
 			</ion-header>
 			<ion-content class="ion-padding">
 				<div class="add-section add-project">
-					<ion-input [(ngModel)]="newProjectName" placeholder="Project name"
-						(ionChange)="newProjectName = $event.detail.value || ''"></ion-input>
-					<ion-textarea [(ngModel)]="newProjectDescription" placeholder="Project description (optional)"
-						rows="2"></ion-textarea>
-					<ion-button expand="block" (click)="addProject(); showAddProjectModal = false;"
-						[disabled]="!newProjectName.trim()">
+					<ion-item>
+						<ion-input
+							[(ngModel)]="newProjectName"
+							placeholder="Project name"
+							label="Name"
+							labelPlacement="floating"
+							(keyup.enter)="addProject(); showAddProjectModal = false;"
+							inputmode="text"
+							autocorrect="on"
+							spellcheck="true"
+							autocomplete="on">
+						</ion-input>
+					</ion-item>
+					<ion-item>
+						<ion-textarea
+							[(ngModel)]="newProjectDescription"
+							placeholder="Project description (optional)"
+							label="Description"
+							labelPlacement="floating"
+							rows="3"
+							inputmode="text"
+							autocorrect="on"
+							spellcheck="true"
+							autocomplete="on">
+						</ion-textarea>
+					</ion-item>
+					<ion-button expand="block" (click)="addProject(); showAddProjectModal = false;" [disabled]="!newProjectName.trim()">
 						Add Project
 					</ion-button>
 				</div>
@@ -154,9 +180,17 @@
 			<ion-content class="ion-padding">
 				<div class="add-section add-project">
 					<ion-input [(ngModel)]="editProjectName" placeholder="Project name"
-						(ionChange)="editProjectName = $event.detail.value || ''"></ion-input>
+						(ionChange)="editProjectName = $event.detail.value || ''"
+						inputmode="text"
+						autocorrect="on"
+						spellcheck="true"
+						autocomplete="on"></ion-input>
 					<ion-textarea [(ngModel)]="editProjectDescription" placeholder="Project description"
-						rows="3"></ion-textarea>
+						rows="3"
+						inputmode="text"
+						autocorrect="on"
+						spellcheck="true"
+						autocomplete="on"></ion-textarea>
 					<ion-button expand="block" (click)="updateProject()" [disabled]="!editProjectName.trim()">
 						Save Changes
 					</ion-button>

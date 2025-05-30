@@ -49,3 +49,26 @@ ion-card {
 ion-header {
 	background-color: var(--ion-background-color);
 }
+
+.hd-button {
+	background: var(--ion-color-warning);
+	color: var(--ion-color-warning-contrast);
+	border: none;
+	border-radius: 8px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	white-space: nowrap;
+	pointer-events: auto;
+	z-index: 1000000;
+	display: inline-block;
+
+	&:hover {
+		background: var(--ion-color-warning-shade);
+		transform: translateY(-1px);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+}
