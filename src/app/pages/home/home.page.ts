@@ -32,10 +32,8 @@ import {
 	IonFabButton,
 	IonCardTitle,
 	IonCard,
-	IonCardSubtitle,
 	IonCardContent,
 	IonCardHeader,
-	IonAlert
 } from '@ionic/angular/standalone';
 import { AlertController } from '@ionic/angular';
 
@@ -45,7 +43,6 @@ import { AlertController } from '@ionic/angular';
 	styleUrls: ['./home.page.scss'],
 	standalone: true,
 	imports: [
-		IonAlert,
 		IonCardHeader,
 		IonCardContent,
 		IonCard,
