@@ -58,10 +58,6 @@ ion-col {
 	justify-content: center;
 }
 
-h2, ion-label{
-	user-select: none;
-}
-
 // Section Titles
 .section-title {
 	font-size: 1.5rem;
@@ -188,7 +184,6 @@ h2, ion-label{
 	margin: 8 auto;
 	width: $container-width;
 	transition: transform 0.2s, box-shadow 0.2s;
-	position: relative;
 
 	&:hover {
 		transform: translateX(4px);
@@ -265,64 +260,6 @@ h2, ion-label{
 				font-size: 20px;
 			}
 		}
-	}
-
-	.todo-actions-dropdown {
-		position: absolute;
-		top: 85%;
-		right: 7%;
-		transform: translateY(-50%);
-		z-index: 2000;
-		min-width: unset;
-		min-height: 36px;
-		padding: 0 8px;
-		border-radius: 8px;
-		box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-		background: var(--ion-background-color, #fff);
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 8px;
-		animation: fadeInDropdown 0.15s;
-
-		ion-list {
-			padding: 0;
-			background: transparent;
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			gap: 8px;
-		}
-
-		ion-item {
-			--padding-start: 8px;
-			--inner-padding-end: 8px;
-			--min-height: 30px;
-			font-size: 14px;
-			--background: transparent;
-			display: flex;
-			align-items: center;
-			height: 32px;
-			margin: 0;
-			border-radius: 6px;
-			transition: background 0.15s;
-			border: none;
-			min-width: 0;
-
-			&:hover, &:focus {
-				background: var(--ion-color-light, #f6f6f6);
-			}
-
-			ion-icon {
-				font-size: 16px;
-				margin-right: 6px;
-			}
-		}
-	}
-
-	@keyframes fadeInDropdown {
-		from { opacity: 0; transform: translateY(-8px); }
-		to { opacity: 1; transform: translateY(0); }
 	}
 }
 
@@ -456,6 +393,11 @@ h2, ion-label{
 			margin-right: $spacing;
 		}
 	}
+}
+
+ion-fab {
+	position: fixed;
+	top: 90%;
 }
 
 // Responsive
