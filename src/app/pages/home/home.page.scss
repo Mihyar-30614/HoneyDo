@@ -1,158 +1,98 @@
-// Variables
-$border-radius: 12px;
-$shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-$primary-color: var(--ion-color-primary);
-$text-color: var(--ion-text-color);
-$medium-color: var(--ion-color-medium);
-$background-color: var(--ion-background-color);
-$card-background: var(--ion-card-background, #fff);
-$spacing: 16px;
-$container-width: 1200px;
-$card-width: 360px;
-
-// Reusable Card Style
-.card {
-	background: $card-background;
-	border-radius: $border-radius;
-	box-shadow: $shadow;
-}
-
-// Header
-ion-header ion-toolbar {
-
-	ion-title {
-		font-size: 1.25rem;
-		font-weight: 600;
-		color: $text-color;
-	}
-
-	.avatar-button {
-		background: $primary-color;
-		border-radius: 50%;
-		width: 40px;
-		height: 40px;
-		--color: var(--ion-color-primary-contrast);
-		font-size: 1rem;
-		margin: 0 8px;
-		transition: transform 0.2s, box-shadow 0.2s;
-
-		&:hover {
-			transform: translateY(-1px);
-		}
-
-		&:active {
-			transform: translateY(0);
-		}
-	}
-}
-
-ion-row {
-	margin: -$spacing / 2;
-	display: flex;
-	justify-content: center;
-}
-
-ion-col {
-	padding: $spacing / 2;
-	display: flex;
-	justify-content: center;
-}
-
-// Section Titles
-.section-title {
-	font-size: 1.5rem;
+ion-title {
+	font-size: 1.25rem;
 	font-weight: 600;
-	margin: $spacing * 2 auto $spacing;
-	text-align: center;
-	color: $text-color;
-	max-width: $container-width;
-	padding: 0 $spacing;
 }
 
-// Add Sections
-.add-section {
-	@extend .card;
-	padding: $spacing;
-	margin: $spacing auto;
-	max-width: $container-width;
-
-	&.add-project {
-		display: flex;
-		flex-direction: column;
-		gap: $spacing;
-		max-width: $card-width;
-	}
-}
-
-// Project Card
-.project-card {
-	@extend .card;
-	width: 100%;
-	max-width: $card-width;
-	cursor: pointer;
+.avatar-button {
+	border-radius: 50%;
+	width: 45px;
+	height: 45px;
+	background-color: var(--ion-color-warning);
+	font-size: 1rem;
 	transition: transform 0.2s, box-shadow 0.2s;
 
 	&:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 	}
 
-	&.selected {
-		border: 2px solid $primary-color;
+	&:active {
+		transform: translateY(0);
+	}
+}
+
+ion-card {
+	background-color: #fff;
+	height: 200px;
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+
+	ion-card-header {
+		padding: 16px;
 	}
 
-	.card-header {
-		padding: $spacing;
-		border-bottom: 1px solid var(--ion-color-light-shade);
+	ion-card-title {
+		font-size: 1.1rem;
+		font-weight: 600;
+		margin-bottom: 6px;
+	}
 
-		h3 {
-			font-size: 1.1rem;
-			font-weight: 600;
-			margin-bottom: $spacing / 2;
-			color: $text-color;
-		}
+	ion-card-content {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		padding: 0 16px;
 
 		.description {
 			font-size: 0.875rem;
-			color: $medium-color;
-			margin-bottom: $spacing;
+			color: var(--ion-color-medium);
 			line-height: 1.4;
+			margin-bottom: 16px;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			flex: 1;
 		}
 
 		.progress-section {
 			display: flex;
 			align-items: center;
-			gap: $spacing;
+			gap: 16px;
+			margin-top: auto;
+			margin-bottom: 16px;
 
 			ion-progress-bar {
 				flex: 1;
 				height: 6px;
 				--background: var(--ion-color-light-shade);
-				--progress-background: $primary-color;
+				--progress-background: var(--ion-color-primary);
 			}
 
 			.progress-text {
 				font-size: 0.75rem;
 				font-weight: 500;
-				color: $medium-color;
+				color: var(--ion-color-medium);
 			}
 		}
 	}
 
 	.card-footer {
-		padding: $spacing;
+		border-top: 1px solid var(--ion-color-light-shade);
+		padding: 12px 16px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		flex-shrink: 0;
 
 		.date {
 			font-size: 0.75rem;
-			color: $medium-color;
+			color: var(--ion-color-medium);
 		}
 
 		.actions {
 			display: flex;
-			gap: $spacing / 2;
 
 			ion-button {
 				--padding-start: 8px;
@@ -161,57 +101,88 @@ ion-col {
 				margin: 0;
 
 				ion-icon {
-					font-size: 18px;
+					font-size: 24px;
 				}
 			}
 		}
 	}
 }
 
-// Empty State
-.empty-state {
-	@extend .card;
+.section-title {
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin: 32px auto 16px;
 	text-align: center;
-	padding: $spacing * 3;
-	margin: $spacing * 2 auto;
-	max-width: $container-width;
+	color: var(--ion-text-color);
+	padding: 0 16px;
+}
+
+.empty-state {
+	background-color: #fff;
+	text-align: center;
+	padding: 48px;
+	margin: 32px auto;
 
 	ion-icon {
 		font-size: 3rem;
-		margin-bottom: $spacing;
-		color: $primary-color;
+		margin-bottom: 16px;
+		color: var(--ion-color-primary);
 	}
 
 	h3 {
 		font-size: 1.25rem;
 		font-weight: 600;
-		margin-bottom: $spacing / 2;
-		color: $text-color;
+		margin-bottom: 8px;
+		color: var(--ion-text-color);
 	}
 
 	p {
 		font-size: 0.875rem;
-		color: $medium-color;
+		color: var(--ion-color-medium);
 	}
 }
 
-// User Dropdown
 .user-dropdown {
-	@extend .card;
 	position: absolute;
-	top: 0;
-	right: $spacing;
+	top: 0px;
+	right: 5px;
 	z-index: 1000;
-	padding: $spacing / 2;
+	width: 200px;
+	background: var(--ion-color-light);
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	overflow: hidden;
+
+	ion-list {
+		padding: 8px 0;
+		background: transparent;
+	}
 
 	ion-item {
-		--padding-start: $spacing;
-		--padding-end: $spacing;
+		--background: transparent;
+		--padding-start: 16px;
+		--padding-end: 16px;
 		--min-height: 48px;
+		--ripple-color: var(--ion-color-medium);
+		margin: 0;
 
 		ion-icon {
 			font-size: 1.25rem;
-			margin-right: $spacing;
+			margin-right: 16px;
+			color: var(--ion-color-medium);
+		}
+
+		ion-label {
+			font-size: 0.875rem;
+			color: var(--ion-color-dark);
+		}
+
+		&:hover {
+			--background: rgba(var(--ion-color-medium-rgb), 0.1);
+		}
+
+		&.item-has-focus {
+			--background: rgba(var(--ion-color-medium-rgb), 0.1);
 		}
 	}
 }
@@ -219,26 +190,17 @@ ion-col {
 ion-fab {
 	position: fixed;
 	top: 90%;
+	right: 20px;
 }
 
-// Responsive
-@media (max-width: 1200px) {
-	:root {
-		--container-width: 100%;
-	}
+.add-section {
+	background-color: #fff;
+	padding: 16px;
+	margin: 16px auto;
 
-	$card-width: 320px;
-}
-
-@media (max-width: 768px) {
-	.user-dropdown {
-		right: $spacing / 2;
-		width: calc(100% - #{$spacing});
-	}
-}
-
-@media (max-width: 480px) {
-	ion-toolbar {
-		--min-height: 56px;
+	&.add-project {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
 	}
 }

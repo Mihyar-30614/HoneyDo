@@ -10,108 +10,131 @@
 </ion-header>
 
 <ion-content>
-	<div class="projects-view">
-		<ion-searchbar [(ngModel)]="projectSearch" placeholder="Search projects..." mode="ios" animated></ion-searchbar>
+
+	<ion-grid>
+
+		<ion-row class="ion-justify-content-center">
+			<ion-col sizeSm="12" sizeXl="6">
+				<ion-searchbar [(ngModel)]="projectSearch" placeholder="Search projects..." mode="ios"
+					animated></ion-searchbar>
+			</ion-col>
+		</ion-row>
 
 		<!-- Active Projects -->
-		<ion-grid>
-			<ion-row>
-				<ion-col size="12" size-md="6" *ngFor="let project of projects | projectFilter: projectSearch">
-					<div class="project-card" (click)="selectProject(project)">
-						<div class="card-header">
-							<h3>{{ project.name }}</h3>
-							<p *ngIf="project.description" class="description">{{ project.description }}</p>
-							<div class="progress-section">
-								<ion-progress-bar [value]="project.progress || 0"></ion-progress-bar>
-								<span class="progress-text">{{ (project.progress || 0) | percent }}</span>
-							</div>
+		<div *ngIf="projects.length === 0" class="empty-state">
+			<ion-icon name="folder-outline"></ion-icon>
+			<h3>No Projects</h3>
+			<p>Projects will appear here</p>
+		</div>
+
+		<ion-row>
+			<ion-col size="12" size-md="4" *ngFor="let project of projects | projectFilter: projectSearch">
+				<ion-card (click)="selectProject(project)">
+					<ion-card-header>
+						<ion-card-title>{{ project.name }}</ion-card-title>
+					</ion-card-header>
+					<ion-card-content>
+						<p *ngIf="project.description" class="description">{{ project.description }}</p>
+						<div class="progress-section">
+							<ion-progress-bar [value]="project.progress/100 || 0"></ion-progress-bar>
+							<span class="progress-text">{{ project.progress || 0 }}%</span>
 						</div>
-						<div class="card-footer">
-							<span class="date" *ngIf="project.createdAt">{{ project.createdAt | date:'mediumDate' }}</span>
-							<div class="actions">
-								<ion-button fill="clear" size="small" (click)="editProj(project); $event.stopPropagation()">
-									<ion-icon name="create"></ion-icon>
-								</ion-button>
-								<ion-button fill="clear" size="small" (click)="archiveProject(project.id); $event.stopPropagation()">
-									<ion-icon name="archive"></ion-icon>
-								</ion-button>
-							</div>
+					</ion-card-content>
+					<div class="card-footer">
+						<span class="date" *ngIf="project.createdAt">{{ project.createdAt | date:'mediumDate' }}</span>
+						<div class="actions">
+							<ion-button fill="clear" size="small" (click)="editProj(project); $event.stopPropagation()">
+								<ion-icon name="create-outline"></ion-icon>
+							</ion-button>
+							<ion-button fill="clear" size="small"
+								(click)="archiveProject(project.id); $event.stopPropagation()">
+								<ion-icon name="archive-outline"></ion-icon>
+							</ion-button>
 						</div>
 					</div>
-				</ion-col>
-			</ion-row>
-		</ion-grid>
+				</ion-card>
+			</ion-col>
+		</ion-row>
 
-		<!-- Archived Projects -->
-		<h2 class="section-title">Archived Projects</h2>
-		<div *ngIf="archivedProjects.length === 0" class="empty-state">
-			<ion-icon name="archive-outline"></ion-icon>
-			<h3>No Archived Projects</h3>
-			<p>Archived projects will appear here</p>
-		</div>
-		<ion-grid>
-			<ion-row>
-				<ion-col size="12" size-md="6" *ngFor="let project of archivedProjects | projectFilter: projectSearch">
-					<div class="project-card">
-						<div class="card-header">
-							<h3>{{ project.name }}</h3>
-							<p *ngIf="project.description" class="description">{{ project.description }}</p>
-							<div class="progress-section">
-								<ion-progress-bar [value]="project.progress || 0"></ion-progress-bar>
-								<span class="progress-text">{{ (project.progress || 0) | percent }}</span>
-							</div>
+	</ion-grid>
+
+	<!-- Archived Projects -->
+	<h2 class="section-title">Archived Projects</h2>
+	<div *ngIf="archivedProjects.length === 0" class="empty-state">
+		<ion-icon name="archive-outline"></ion-icon>
+		<h3>No Archived Projects</h3>
+		<p>Archived projects will appear here</p>
+	</div>
+	<ion-grid>
+		<ion-row>
+			<ion-col size="12" size-md="6" *ngFor="let project of archivedProjects | projectFilter: projectSearch">
+
+				<ion-card>
+					<ion-card-header>
+						<ion-card-title>{{ project.name }}</ion-card-title>
+					</ion-card-header>
+					<ion-card-content>
+						<p *ngIf="project.description" class="description">{{ project.description }}</p>
+						<div class="progress-section">
+							<ion-progress-bar [value]="project.progress/100 || 0"></ion-progress-bar>
+							<span class="progress-text">{{ project.progress || 0 }}%</span>
 						</div>
-						<div class="card-footer">
+					</ion-card-content>
+					<div class="card-footer">
+						<span class="date" *ngIf="project.createdAt">{{ project.createdAt | date:'mediumDate' }}</span>
+						<div class="actions">
 							<ion-button fill="clear" size="small" (click)="unarchiveProject(project.id)">
 								<ion-icon name="refresh"></ion-icon>
 								Unarchive
 							</ion-button>
 						</div>
 					</div>
-				</ion-col>
-			</ion-row>
-		</ion-grid>
+				</ion-card>
 
-		<ion-fab vertical="bottom" horizontal="end" slot="fixed">
-			<ion-fab-button color="warning" (click)="showAddProjectModal = true">
-				<ion-icon name="add"></ion-icon>
-			</ion-fab-button>
-		</ion-fab>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
 
-		<ion-modal mode="ios" [isOpen]="showAddProjectModal" (didDismiss)="showAddProjectModal = false">
-			<ng-template>
-				<ion-header>
-					<ion-toolbar>
-						<ion-title>New Project</ion-title>
-						<ion-buttons slot="end">
-							<ion-button (click)="showAddProjectModal = false">Cancel</ion-button>
-						</ion-buttons>
-					</ion-toolbar>
-				</ion-header>
-				<ion-content class="ion-padding">
-					<div class="add-section add-project">
-						<ion-input [(ngModel)]="newProjectName" placeholder="Project name"
-							(ionChange)="newProjectName = $event.detail.value || ''"></ion-input>
-						<ion-textarea [(ngModel)]="newProjectDescription" placeholder="Project description (optional)"
-							rows="2"></ion-textarea>
-						<ion-button expand="block" (click)="addProject(); showAddProjectModal = false;" [disabled]="!newProjectName.trim()">
-							Add Project
-						</ion-button>
-					</div>
-				</ion-content>
-			</ng-template>
-		</ion-modal>
-	</div>
+	<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+		<ion-fab-button color="warning" (click)="showAddProjectModal = true">
+			<ion-icon name="add"></ion-icon>
+		</ion-fab-button>
+	</ion-fab>
+
+	<ion-modal mode="ios" [isOpen]="showAddProjectModal" (didDismiss)="showAddProjectModal = false">
+		<ng-template>
+			<ion-header>
+				<ion-toolbar>
+					<ion-title>New Project</ion-title>
+					<ion-buttons slot="end">
+						<ion-button (click)="showAddProjectModal = false">Cancel</ion-button>
+					</ion-buttons>
+				</ion-toolbar>
+			</ion-header>
+			<ion-content class="ion-padding">
+				<div class="add-section add-project">
+					<ion-input [(ngModel)]="newProjectName" placeholder="Project name"
+						(ionChange)="newProjectName = $event.detail.value || ''"></ion-input>
+					<ion-textarea [(ngModel)]="newProjectDescription" placeholder="Project description (optional)"
+						rows="2"></ion-textarea>
+					<ion-button expand="block" (click)="addProject(); showAddProjectModal = false;"
+						[disabled]="!newProjectName.trim()">
+						Add Project
+					</ion-button>
+				</div>
+			</ion-content>
+		</ng-template>
+	</ion-modal>
 
 	<!-- User Dropdown Menu -->
 	<div class="user-dropdown" *ngIf="userMenuOpen">
-		<ion-list>
-			<ion-item button (click)="editProfile()">
-				<ion-icon name="person" slot="start"></ion-icon>
+		<ion-list lines="none">
+			<ion-item button detail="false" (click)="editProfile()">
+				<ion-icon name="person-outline" slot="start"></ion-icon>
 				<ion-label>Edit Profile</ion-label>
 			</ion-item>
-			<ion-item button (click)="logout()">
-				<ion-icon name="log-out" slot="start"></ion-icon>
+			<ion-item button detail="false" (click)="logout()">
+				<ion-icon name="log-out-outline" slot="start"></ion-icon>
 				<ion-label>Logout</ion-label>
 			</ion-item>
 		</ion-list>
@@ -141,4 +164,5 @@
 			</ion-content>
 		</ng-template>
 	</ion-modal>
+
 </ion-content>

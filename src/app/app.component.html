@@ -1,9 +1,10 @@
 <ion-app>
 	<ion-router-outlet></ion-router-outlet>
-
-	<div *ngIf="showInstallBanner" class="pwa-install-banner">
-		<span>Install HoneyDo for a better experience!</span>
-		<button (click)="onInstallPwa()">Install</button>
-		<button (click)="closeBanner()" class="close-btn">×</button>
-	</div>
 </ion-app>
+
+<app-pwa-install-banner
+	*ngIf="showInstallBanner"
+	[show]="showInstallBanner"
+	(install)="onInstallPwa()"
+	(close)="closeBanner()">
+</app-pwa-install-banner>

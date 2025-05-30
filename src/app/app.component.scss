@@ -1,49 +1,147 @@
 /* PWA Install Banner Styles */
 .pwa-install-banner {
-	position: fixed;
-	bottom: 24px;
-	left: 50%;
-	transform: translateX(-50%);
-	background: #fff8ee;
-	color: #b7791f;
-	border: 1px solid #ecc94b;
-	border-radius: 12px;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
-	padding: 1rem 1.5rem;
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-	z-index: 3000;
-	font-size: 1rem;
+	position: fixed !important;
+	bottom: 24px !important;
+	left: 50% !important;
+	transform: translateX(-50%) !important;
+	background: var(--ion-color-light) !important;
+	color: var(--ion-color-dark) !important;
+	border: 2px solid var(--ion-color-warning) !important;
+	border-radius: 16px !important;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+	padding: 1.25rem 1.5rem !important;
+	display: flex !important;
+	align-items: center !important;
+	gap: 1rem !important;
+	z-index: 999999 !important;
+	font-size: 1rem !important;
+	max-width: 90% !important;
+	width: 400px !important;
+	animation: slideUp 0.3s ease-out !important;
+	pointer-events: auto !important;
+	opacity: 1 !important;
+	visibility: visible !important;
+	transition: all 0.3s ease-out !important;
 
-	/* Hide on large screens (desktop) */
+	/* Desktop specific styles */
 	@media (min-width: 900px) {
-		display: none;
+		width: 500px !important;
+		font-size: 1.1rem !important;
+		padding: 1.5rem 2rem !important;
+		bottom: 32px !important;
+		right: 32px !important;
+		left: auto !important;
+		transform: none !important;
+	}
+
+	span {
+		flex: 1 !important;
+		font-weight: 500 !important;
+		color: var(--ion-color-dark) !important;
+		display: block !important;
+
+		.desktop-only {
+			display: none !important;
+		}
+
+		@media (min-width: 900px) {
+			.desktop-only {
+				display: inline !important;
+			}
+		}
+	}
+
+	button {
+		background: var(--ion-color-warning) !important;
+		color: var(--ion-color-warning-contrast) !important;
+		border: none !important;
+		border-radius: 8px !important;
+		padding: 0.75rem 1.25rem !important;
+		font-weight: 600 !important;
+		cursor: pointer !important;
+		transition: all 0.2s ease !important;
+		white-space: nowrap !important;
+		pointer-events: auto !important;
+		z-index: 1000000 !important;
+		display: inline-block !important;
+
+		&:hover {
+			background: var(--ion-color-warning-shade) !important;
+			transform: translateY(-1px) !important;
+		}
+
+		&:active {
+			transform: translateY(0) !important;
+		}
+
+		/* Desktop specific button styles */
+		@media (min-width: 900px) {
+			padding: 0.875rem 1.5rem !important;
+			font-size: 1.1rem !important;
+		}
+	}
+
+	.close-btn {
+		background: transparent !important;
+		color: var(--ion-color-medium) !important;
+		font-size: 1.5rem !important;
+		border: none !important;
+		padding: 0.25rem !important;
+		cursor: pointer !important;
+		transition: color 0.2s !important;
+		pointer-events: auto !important;
+		z-index: 1000000 !important;
+		display: inline-block !important;
+		line-height: 1 !important;
+
+		&:hover {
+			color: var(--ion-color-dark) !important;
+		}
+
+		/* Desktop specific close button styles */
+		@media (min-width: 900px) {
+			font-size: 1.75rem !important;
+			padding: 0.5rem !important;
+		}
 	}
 }
 
-.pwa-install-banner button {
-	background: #ecc94b;
-	color: #fff;
-	border: none;
-	border-radius: 6px;
-	padding: 0.5rem 1rem;
-	font-weight: 600;
-	cursor: pointer;
-	margin-left: 0.5rem;
-	transition: background 0.2s;
+@keyframes slideUp {
+	from {
+		transform: translate(-50%, 100%) !important;
+		opacity: 0 !important;
+		visibility: hidden !important;
+	}
+	to {
+		transform: translate(-50%, 0) !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+	}
 }
 
-.pwa-install-banner button:hover {
-	background: #b7791f;
+/* Desktop specific animation */
+@media (min-width: 900px) {
+	@keyframes slideUp {
+		from {
+			transform: translateY(100%) !important;
+			opacity: 0 !important;
+			visibility: hidden !important;
+		}
+		to {
+			transform: translateY(0) !important;
+			opacity: 1 !important;
+			visibility: visible !important;
+		}
+	}
 }
 
-.pwa-install-banner .close-btn {
-	background: transparent;
-	color: #b7791f;
-	font-size: 1.2rem;
-	border: none;
-	margin-left: 0.5rem;
-	cursor: pointer;
-	padding: 0 0.5rem;
+/* Ensure the banner is above all other elements */
+ion-app {
+	.pwa-install-banner {
+		position: fixed !important;
+		display: flex !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+		z-index: 999999 !important;
+	}
 }

@@ -7,7 +7,6 @@ import { Project } from '../../models/project.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProjectFilterPipe } from './project-filter.pipe';
-import { OrderByPipe } from '../../pipes/order-by.pipe';
 import { Timestamp } from 'firebase/firestore';
 import {
 	IonHeader,
@@ -30,8 +29,7 @@ import {
 	IonSearchbar,
 	IonModal,
 	IonFab,
-	IonFabButton,
-} from '@ionic/angular/standalone';
+	IonFabButton, IonCardTitle, IonCard, IonCardSubtitle, IonCardContent, IonCardHeader } from '@ionic/angular/standalone';
 
 
 @Component({
@@ -39,33 +37,30 @@ import {
 	templateUrl: './home.page.html',
 	styleUrls: ['./home.page.scss'],
 	standalone: true,
-	imports: [
-		CommonModule,
-		FormsModule,
-		ProjectFilterPipe,
-		OrderByPipe,
-		IonBadge,
-		IonTitle,
-		IonProgressBar,
-		IonCol,
-		IonRow,
-		IonGrid,
-		IonLabel,
-		IonIcon,
-		IonItem,
-		IonList,
-		IonButtons,
-		IonHeader,
-		IonToolbar,
-		IonContent,
-		IonButton,
-		IonSearchbar,
-		IonInput,
-		IonTextarea,
-		IonModal,
-		IonFab,
-		IonFabButton,
-	],
+	imports: [IonCardHeader, IonCardContent, IonCard, IonCardTitle,
+    CommonModule,
+    FormsModule,
+    ProjectFilterPipe,
+    IonTitle,
+    IonProgressBar,
+    IonCol,
+    IonRow,
+    IonGrid,
+    IonLabel,
+    IonIcon,
+    IonItem,
+    IonList,
+    IonButtons,
+    IonHeader,
+    IonToolbar,
+    IonContent,
+    IonButton,
+    IonSearchbar,
+    IonInput,
+    IonTextarea,
+    IonModal,
+    IonFab,
+    IonFabButton],
 })
 export class HomePage implements OnInit {
 	user: User | null = null;
@@ -107,12 +102,7 @@ export class HomePage implements OnInit {
 
 	generateInitials(user: User): string {
 		if (user.displayName) {
-			return user.displayName
-				.split(' ')
-				.map(n => n[0])
-				.join('')
-				.substring(0, 2)
-				.toUpperCase();
+			return user.displayName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 		} else if (user.email) {
 			const parts = user.email.split(/[@.]/).filter(Boolean);
 			if (parts.length >= 2) {
@@ -168,6 +158,21 @@ export class HomePage implements OnInit {
 					createdAt: p.createdAt instanceof Timestamp ? p.createdAt.toDate() : p.createdAt,
 					progress: 0 // Initialize progress
 				}));
+
+				// Calculate progress for each project
+				const allProjects = [...this.projects, ...this.archivedProjects];
+				allProjects.forEach(project => {
+					this.data.getTodos(project.id).subscribe(todos => {
+						const totalTodos = todos.length;
+						if (totalTodos === 0) {
+							project.progress = 0;
+							return;
+						}
+
+						const completedTodos = todos.filter(todo => todo.status === 'done').length;
+						project.progress = Math.round((completedTodos / totalTodos) * 100);
+					});
+				});
 
 				this.loading = false;
 			},
