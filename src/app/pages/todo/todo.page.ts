@@ -25,19 +25,14 @@ import {
   IonToolbar,
   IonContent,
   IonButton,
-  IonSearchbar,
   IonInput,
-  IonTextarea,
   IonModal,
   IonFab,
   IonFabButton,
   IonCard,
   IonCardContent,
   IonCheckbox,
-  IonItemGroup,
-  IonItemDivider,
   IonPopover,
-  IonCardTitle
 } from '@ionic/angular/standalone';
 
 @Component({
@@ -51,7 +46,6 @@ import {
     OrderByPipe,
     IonBadge,
     IonTitle,
-    IonProgressBar,
     IonCol,
     IonRow,
     IonGrid,
@@ -64,19 +58,14 @@ import {
     IonToolbar,
     IonContent,
     IonButton,
-    IonSearchbar,
     IonInput,
-    IonTextarea,
     IonModal,
     IonFab,
     IonFabButton,
     IonCard,
     IonCardContent,
     IonCheckbox,
-    IonItemGroup,
-    IonItemDivider,
     IonPopover,
-    IonCardTitle
   ],
 })
 export class TodoPage implements OnInit, OnDestroy {
