@@ -1,0 +1,199 @@
+/* Todo Page Styles */
+
+:host {
+  display: block;
+}
+
+// --- Migrated from home.page.scss ---
+
+.todo-item {
+  background: var(--ion-card-background, #fff);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  margin: 8 auto;
+  width: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &.done {
+    opacity: 0.7;
+  }
+  &.in-progress {
+    border-left: 4px solid var(--ion-color-warning);
+  }
+  &.new {
+    border-left: 4px solid var(--ion-color-warning-tint);
+  }
+
+  ion-label {
+    flex: 1;
+    h2 {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: var(--ion-text-color);
+      &.line-through {
+        text-decoration: line-through;
+        color: var(--ion-color-medium);
+      }
+    }
+    p {
+      font-size: 0.75rem;
+      color: var(--ion-color-medium);
+    }
+  }
+
+  .status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    user-select: none;
+    &.new {
+      background: var(--ion-color-warning-tint);
+      color: var(--ion-color-warning-contrast);
+    }
+    &.in-progress {
+      background: var(--ion-color-warning);
+      color: var(--ion-color-warning-contrast);
+    }
+    &.done {
+      background: var(--ion-color-success);
+      color: var(--ion-color-success-contrast);
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    ion-button {
+      --padding-start: 8px;
+      --padding-end: 8px;
+      height: 32px;
+      ion-icon {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+.todo-stats {
+  background: var(--ion-card-background, #fff);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 16px;
+  margin: 16px 5px;
+  padding: 16px;
+  .stat-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 12px;
+    transition: transform 0.2s;
+    &:hover {
+      transform: translateY(-2px);
+    }
+    ion-icon {
+      font-size: 1.5rem;
+      padding: 8px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .stat-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: capitalize;
+      opacity: 0.8;
+    }
+    &.new {
+      background: var(--ion-color-warning-tint);
+      ion-icon, .stat-value, .stat-label { color: var(--ion-color-warning-contrast); }
+    }
+    &.in-progress {
+      background: var(--ion-color-warning);
+      ion-icon, .stat-value, .stat-label { color: var(--ion-color-warning-contrast); }
+    }
+    &.done {
+      background: var(--ion-color-success);
+      ion-icon, .stat-value, .stat-label { color: var(--ion-color-success-contrast); }
+    }
+    &.total {
+      background: var(--ion-color-light);
+      color: var(--ion-color-dark);
+    }
+  }
+}
+
+.empty-state {
+  background: var(--ion-card-background, #fff);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  padding: 48px;
+  margin: 32px auto;
+  max-width: 100%;
+  ion-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    color: var(--ion-color-primary);
+  }
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--ion-text-color);
+  }
+  p {
+    font-size: 0.875rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.add-section.add-todo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .add-section.add-todo {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .todo-stats {
+    flex-wrap: wrap;
+    .stat-item {
+      min-width: 45%;
+      margin-bottom: 8px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .todo-item {
+    flex-wrap: wrap;
+    .actions {
+      width: 100%;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+  }
+}

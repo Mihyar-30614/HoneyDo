@@ -4,7 +4,6 @@ import { User } from '@angular/fire/auth';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
 import { Project } from '../../models/project.model';
-import { Todo } from '../../models/todo.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProjectFilterPipe } from './project-filter.pipe';
@@ -74,14 +73,10 @@ export class HomePage implements OnInit {
 	userMenuOpen = false;
 	userMenuEvent: any = null;
 	loading = true;
-	viewState: 'projects' | 'todos' = 'projects';
 
-	// Project and Todo data
+	// Project data
 	projects: Project[] = [];
 	archivedProjects: Project[] = [];
-	selectedProject: Project | null = null;
-	todos: Todo[] = [];
-	archivedTodos: Todo[] = [];
 
 	// Form state
 	projectSearch = '';
@@ -90,20 +85,7 @@ export class HomePage implements OnInit {
 	editingProject: Project | null = null;
 	editProjectName = '';
 	editProjectDescription: string = '';
-	newTodoTitle = '';
-	editingTodo: Todo | null = null;
-	editTodoTitle = '';
-
-	// Add state for showing FAB forms
-	showAddProject = false;
-	showAddTodo = false;
 	showAddProjectModal = false;
-	showAddTodoModal = false;
-
-	// State for todo actions popover
-	todoActionsPopoverOpen = false;
-	todoActionsEvent: any = null;
-	selectedTodo: Todo | null = null;
 
 	constructor(
 		private auth: AuthService,
@@ -187,19 +169,6 @@ export class HomePage implements OnInit {
 					progress: 0 // Initialize progress
 				}));
 
-				// Load todos for each project to calculate progress
-				const allProjects = [...this.projects, ...this.archivedProjects];
-				allProjects.forEach(project => {
-					this.data.getTodos(project.id).subscribe(todos => {
-						const total = todos.length;
-						const done = todos.filter(t => t.status === 'done').length;
-						project.progress = total === 0 ? 0 : done / total;
-					});
-				});
-
-				if (this.selectedProject && !this.projects.find(p => p.id === this.selectedProject?.id)) {
-					this.selectedProject = null;
-				}
 				this.loading = false;
 			},
 			error: (error) => {
@@ -210,15 +179,7 @@ export class HomePage implements OnInit {
 	}
 
 	selectProject(p: Project): void {
-		this.selectedProject = p;
-		this.loadTodos(p.id);
-		this.viewState = 'todos';
-	}
-
-	backToProjects(): void {
-		this.viewState = 'projects';
-		this.selectedProject = null;
-		this.todos = [];
+		this.router.navigate(['/todo', p.id]);
 	}
 
 	addProject(): void {
@@ -281,11 +242,6 @@ export class HomePage implements OnInit {
 			.catch(error => {
 				console.error('Error archiving project:', error);
 			});
-
-		if (this.selectedProject?.id === id) {
-			this.selectedProject = null;
-			this.todos = [];
-		}
 	}
 
 	unarchiveProject(id: string): void {
@@ -305,105 +261,4 @@ export class HomePage implements OnInit {
 				console.error('Error unarchiving project:', error);
 			});
 	}
-
-	// --- Todos ---
-	loadTodos(projectId: string): void {
-		this.data.getTodos(projectId).subscribe(list => {
-			this.todos = list.filter(t => !t.archived);
-			this.archivedTodos = list.filter(t => t.archived);
-
-			// Update project progress
-			const project = this.projects.find(p => p.id === projectId) || this.archivedProjects.find(p => p.id === projectId);
-			if (project) {
-				const total = this.todos.length;
-				const done = this.todos.filter(t => t.status === 'done').length;
-				project.progress = total === 0 ? 0 : done / total;
-			}
-		});
-	}
-
-	addTodo(): void {
-		if (!this.newTodoTitle.trim() || !this.selectedProject) return;
-		this.data.addTodo(this.newTodoTitle, this.selectedProject.id, 'new')
-			.then(() => this.newTodoTitle = '');
-	}
-
-	editT(t: Todo): void {
-		this.editingTodo = t;
-		this.editTodoTitle = t.title;
-	}
-
-	updateTodo(): void {
-		if (!this.editingTodo || !this.editTodoTitle.trim()) return;
-		this.data.updateTodo(this.editingTodo.id, { title: this.editTodoTitle })
-			.then(() => {
-				this.editingTodo = null;
-				this.editTodoTitle = '';
-			});
-	}
-
-	cancelTodoEdit(): void {
-		this.editingTodo = null;
-		this.editTodoTitle = '';
-	}
-
-	archiveTodo(id: string): void {
-		this.data.updateTodo(id, { archived: true });
-	}
-
-	unarchiveTodo(id: string): void {
-		this.data.updateTodo(id, { archived: false });
-	}
-
-	deleteTodo(id: string): void {
-		this.data.deleteTodo(id);
-	}
-
-	updateTodoStatus(t: Todo): void {
-		this.data.updateTodo(t.id, { status: t.status });
-	}
-
-	cycleStatus(t: Todo): void {
-		const order: ('new' | 'in-progress' | 'done')[] = ['new', 'in-progress', 'done'];
-		const currentIndex = order.indexOf(t.status);
-		const nextStatus: 'new' | 'in-progress' | 'done' = order[(currentIndex + 1) % order.length];
-		t.status = nextStatus;
-		this.data.updateTodo(t.id, { status: nextStatus });
-	}
-
-
-	calculateProgress(): number {
-		const total = this.todos.length;
-		const done = this.todos.filter(t => t.status === 'done').length;
-		return total === 0 ? 0 : done / total;
-	}
-
-	get doneCount(): number {
-		return this.todos.filter(t => t.status === 'done').length;
-	}
-
-	get newTodosCount(): number {
-		return this.todos.filter(t => t.status === 'new').length;
-	}
-
-	get inProgressTodosCount(): number {
-		return this.todos.filter(t => t.status === 'in-progress').length;
-	}
-
-	get doneTodosCount(): number {
-		return this.todos.filter(t => t.status === 'done').length;
-	}
-
-	presentTodoActions(event: Event, todo: Todo) {
-		this.todoActionsPopoverOpen = true;
-		this.todoActionsEvent = event;
-		this.selectedTodo = todo;
-	}
-
-	closeTodoActions() {
-		this.todoActionsPopoverOpen = false;
-		this.todoActionsEvent = null;
-		this.selectedTodo = null;
-	}
-
 }
