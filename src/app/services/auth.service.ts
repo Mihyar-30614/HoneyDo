@@ -1,6 +1,13 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, authState, signOut, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from '@angular/fire/auth';
+import { Auth, authState, signOut, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect, setPersistence, browserLocalPersistence, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential, getRedirectResult, sendPasswordResetEmail as firebaseSendPasswordResetEmail } from '@angular/fire/auth';
 import { Observable, BehaviorSubject } from 'rxjs';
+
+function isSafariOrStandalone(): boolean {
+  const ua = window.navigator.userAgent;
+  const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+  return isSafari || isStandalone;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -33,9 +40,20 @@ export class AuthService {
 		return this.setPersistence()
 			.then(() => {
 				const provider = new GoogleAuthProvider();
-				return signInWithPopup(this.auth, provider);
-			})
-			.then((cred) => cred.user);
+				if (isSafariOrStandalone()) {
+					return signInWithRedirect(this.auth, provider).then(() => {
+						// The redirect will leave the page, so this promise never resolves to a user here
+						return new Promise<User>(() => {}); // never resolves, but required for typing
+					});
+				} else {
+					return signInWithPopup(this.auth, provider).then(cred => cred.user);
+				}
+			});
+	}
+
+	async handleGoogleRedirect(): Promise<User | null> {
+		const result = await getRedirectResult(this.auth);
+		return result?.user ?? null;
 	}
 
 	logout(): Promise<void> {
@@ -63,5 +81,9 @@ export class AuthService {
 		} catch (error) {
 			throw error;
 		}
+	}
+
+	sendPasswordResetEmail(email: string): Promise<void> {
+		return firebaseSendPasswordResetEmail(this.auth, email);
 	}
 }

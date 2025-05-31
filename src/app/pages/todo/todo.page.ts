@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '@angular/fire/auth';
 import { AuthService } from '../../services/auth.service';
@@ -86,6 +86,8 @@ export class TodoPage implements OnInit, OnDestroy {
   // Subscriptions
   private authSubscription: Subscription | null = null;
   private routeSubscription: Subscription | null = null;
+
+  @ViewChild('newTodoInput') newTodoInput?: IonInput;
 
   constructor(
     private auth: AuthService,

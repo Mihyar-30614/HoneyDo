@@ -7,11 +7,15 @@ import { CommonModule } from '@angular/common';
 	imports: [CommonModule],
 	template: `
 		<div class="pwa-install-banner" role="alert" aria-live="polite">
-			<span>
+			<span *ngIf="!isIos">
 				<span class="desktop-only">Get the full HoneyDo experience - </span>
 				Install HoneyDo for quick access and offline use
 			</span>
-			<button (click)="onInstall()" class="install-btn" aria-label="Install HoneyDo App">Install App</button>
+			<span *ngIf="isIos">
+				Add HoneyDo to your Home Screen for the best experience.<br>
+				<small>Tap <span style="font-size:1.2em;">&#x1F5D2;</span> or <span style="font-size:1.2em;">&#x2191;</span> then "Add to Home Screen".</small>
+			</span>
+			<button *ngIf="!isIos" (click)="onInstall()" class="install-btn" aria-label="Install HoneyDo App">Install App</button>
 			<button (click)="onClose()" class="close-btn" aria-label="Close install banner">×</button>
 		</div>
 	`,
@@ -136,6 +140,7 @@ import { CommonModule } from '@angular/common';
 })
 export class PwaInstallBannerComponent {
 	@Input() show = false;
+	@Input() isIos = false;
 	@Output() install = new EventEmitter<void>();
 	@Output() close = new EventEmitter<void>();
 

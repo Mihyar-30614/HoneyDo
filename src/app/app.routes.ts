@@ -34,4 +34,8 @@ export const routes: Routes = [
 		loadComponent: () => import('./pages/profile/profile.page').then((m) => m.ProfilePage),
 		canActivate: [authGuard],
 	},
+	{
+		path: 'forgot-password',
+		loadComponent: () => import('./pages/forgot-password/forgot-password.page').then(m => m.ForgotPasswordPage)
+	},
 ];

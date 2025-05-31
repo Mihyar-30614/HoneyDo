@@ -61,7 +61,21 @@ export class LoginPage implements OnInit {
 		private router: Router
 	) { }
 
-	ngOnInit() { }
+	async ngOnInit() {
+		// Handle Google redirect result (for Safari/PWA)
+		this.loading = true;
+		try {
+			const user = await this.auth.handleGoogleRedirect();
+			if (user) {
+				this.router.navigate(['/home']);
+				return;
+			}
+		} catch (err) {
+			this.error = 'Google sign-in failed. Please try again.';
+		} finally {
+			this.loading = false;
+		}
+	}
 
 	async handleSubmit() {
 		this.loading = true;

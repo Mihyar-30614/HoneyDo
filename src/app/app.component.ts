@@ -16,6 +16,7 @@ import { PwaInstallBannerComponent } from './components/pwa-install-banner/pwa-i
 export class AppComponent {
 	deferredPrompt: any = null;
 	showInstallBanner = false;
+	public isIos = false;
 	private hasInteracted = false;
 	private isStandalone = false;
 
@@ -26,13 +27,14 @@ export class AppComponent {
 	) {
 		addIcons(allIcons);
 
-		// Check if app is already installed
 		this.isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
 			(window.navigator as any).standalone ||
 			document.referrer.includes('android-app://');
 
-		// Listen for beforeinstallprompt event
+		this.isIos = this.checkIos();
+
 		window.addEventListener('beforeinstallprompt', (e) => {
+			if (this.isIos) return; // iOS never fires this
 			this.deferredPrompt = e;
 			if (this.hasInteracted) {
 				this.ngZone.run(() => {
@@ -41,17 +43,14 @@ export class AppComponent {
 			}
 		});
 
-		// Check if the app is installable
 		this.checkInstallable();
 
-		// Listen for successful login
 		this.auth.user$.subscribe(user => {
 			if (user) {
 				this.startInteractionTimer();
 			}
 		});
 
-		// Track navigation to protected routes
 		this.router.events.pipe(
 			filter(event => event instanceof NavigationEnd)
 		).subscribe((event: any) => {
@@ -61,7 +60,6 @@ export class AppComponent {
 			}
 		});
 
-		// Listen for appinstalled event
 		window.addEventListener('appinstalled', () => {
 			this.isStandalone = true;
 			this.ngZone.run(() => {
@@ -70,11 +68,21 @@ export class AppComponent {
 		});
 	}
 
+	private checkIos(): boolean {
+		const ua = window.navigator.userAgent;
+		return /iphone|ipad|ipod/i.test(ua) && (typeof window === 'undefined' || (window as any).MSStream === undefined);
+	}
+
 	private async checkInstallable() {
 		if (this.isStandalone) {
 			return;
 		}
-
+		if (this.isIos) {
+			this.ngZone.run(() => {
+				this.showInstallBanner = true;
+			});
+			return;
+		}
 		if ('getInstalledRelatedApps' in navigator) {
 			try {
 				const relatedApps = await (navigator as any).getInstalledRelatedApps();
@@ -85,7 +93,6 @@ export class AppComponent {
 				// Silently handle error
 			}
 		}
-
 		if (this.deferredPrompt && this.hasInteracted) {
 			this.ngZone.run(() => {
 				this.showInstallBanner = true;
@@ -100,41 +107,35 @@ export class AppComponent {
 		}, 30000);
 	}
 
-	private checkShowInstallBanner() {
-		if (this.isStandalone || !this.deferredPrompt) {
+	checkShowInstallBanner() {
+		if (this.isStandalone) {
+			this.showInstallBanner = false;
 			return;
 		}
+		if (this.isIos) {
+			this.showInstallBanner = true;
+			return;
+		}
+		if (this.deferredPrompt) {
+			this.showInstallBanner = true;
+		}
+	}
 
-		if (this.hasInteracted && !this.showInstallBanner) {
-			this.ngZone.run(() => {
-				this.showInstallBanner = true;
+	onInstallPwa() {
+		if (this.isIos) {
+			// iOS: show instructions only
+			return;
+		}
+		if (this.deferredPrompt) {
+			this.deferredPrompt.prompt();
+			this.deferredPrompt.userChoice.then(() => {
+				this.showInstallBanner = false;
+				this.deferredPrompt = null;
 			});
 		}
 	}
 
-	async onInstallPwa() {
-		if (this.deferredPrompt) {
-			try {
-				await this.deferredPrompt.prompt();
-				const choiceResult = await this.deferredPrompt.userChoice;
-				if (choiceResult.outcome === 'accepted') {
-					this.isStandalone = true;
-				}
-			} catch (error) {
-				// Silently handle error
-			} finally {
-				this.deferredPrompt = null;
-				this.ngZone.run(() => {
-					this.showInstallBanner = false;
-				});
-			}
-		}
-	}
-
 	closeBanner() {
-		this.ngZone.run(() => {
-			this.showInstallBanner = false;
-		});
-		this.deferredPrompt = null;
+		this.showInstallBanner = false;
 	}
 }

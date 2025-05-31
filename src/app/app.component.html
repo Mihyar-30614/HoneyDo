@@ -5,6 +5,7 @@
 <app-pwa-install-banner
 	*ngIf="showInstallBanner"
 	[show]="showInstallBanner"
+	[isIos]="isIos"
 	(install)="onInstallPwa()"
 	(close)="closeBanner()">
 </app-pwa-install-banner>

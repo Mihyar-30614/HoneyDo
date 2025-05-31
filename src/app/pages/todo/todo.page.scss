@@ -10,21 +10,24 @@ ion-content {
 
 .stat-content {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
-	gap: 8px;
-	padding: 8px;
-	white-space: nowrap;
-	overflow: hidden;
+	gap: 2px;
+	padding: 8px 0;
+	white-space: normal;
+	overflow: visible;
 
 	ion-icon {
 		font-size: 20px;
 		color: var(--ion-color-dark);
+		margin-bottom: 2px;
 	}
 
 	.stat-details {
 		display: flex;
-		align-items: baseline;
-		gap: 4px;
+		flex-direction: column;
+		align-items: center;
+		gap: 2px;
 		min-width: 0;
 
 		h2 {
@@ -38,9 +41,10 @@ ion-content {
 		p {
 			font-size: 0.75rem;
 			font-weight: 500;
-			margin: 0;
+			margin: 0 0 2px 0;
 			color: var(--ion-color-dark);
 			opacity: 0.8;
+			text-align: center;
 		}
 	}
 }
