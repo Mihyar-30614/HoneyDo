@@ -45,9 +45,19 @@ export class AppComponent implements OnInit {
 
 		this.checkInstallable();
 
+		// Handle auth state changes
 		this.auth.user$.subscribe(user => {
 			if (user) {
 				this.startInteractionTimer();
+				// Only navigate if we're on the login page
+				if (this.router.url === '/login') {
+					this.router.navigate(['/home']);
+				}
+			} else {
+				// Only navigate to login if we're not already there
+				if (this.router.url !== '/login') {
+					this.router.navigate(['/login']);
+				}
 			}
 		});
 
@@ -70,10 +80,7 @@ export class AppComponent implements OnInit {
 
 	async ngOnInit() {
 		// Initialize auth and handle any pending redirects
-		const user = await this.auth.initializeAuth();
-		if (user) {
-			await this.router.navigate(['/home']);
-		}
+		await this.auth.initializeAuth();
 	}
 
 	private checkIos(): boolean {

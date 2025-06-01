@@ -8,8 +8,6 @@ import {
 	signInWithEmailAndPassword,
 	GoogleAuthProvider,
 	signInWithPopup,
-	signInWithRedirect,
-	getRedirectResult,
 	setPersistence,
 	browserLocalPersistence,
 	updateProfile,
@@ -18,17 +16,7 @@ import {
 	reauthenticateWithCredential,
 	sendPasswordResetEmail as firebaseSendPasswordResetEmail
 } from '@angular/fire/auth';
-import { Observable, BehaviorSubject, from } from 'rxjs';
-
-function isIos(): boolean {
-	return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-}
-
-function isPwa(): boolean {
-	return window.matchMedia('(display-mode: standalone)').matches ||
-		(window.navigator as any).standalone ||
-		document.referrer.includes('android-app://');
-}
+import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -48,11 +36,10 @@ export class AuthService {
 			// Set persistence to LOCAL
 			await setPersistence(this.auth, browserLocalPersistence);
 
-			// Check for redirect result
-			const result = await getRedirectResult(this.auth);
-			if (result?.user) {
-				this.currentUser.next(result.user);
-				return result.user;
+			const currentUser = this.auth.currentUser;
+			if (currentUser) {
+				this.currentUser.next(currentUser);
+				return currentUser;
 			}
 		} catch (error) {
 			console.error('Auth initialization error:', error);
@@ -72,35 +59,12 @@ export class AuthService {
 
 	async loginWithGoogle(): Promise<void> {
 		const provider = new GoogleAuthProvider();
-
-		// For iOS and PWA, always use redirect
-		if (isIos() || isPwa()) {
-			await signInWithRedirect(this.auth, provider);
-			return;
-		}
-
 		try {
-			// For other platforms, try popup first
 			const result = await signInWithPopup(this.auth, provider);
 			this.currentUser.next(result.user);
 		} catch (error) {
-			console.error('Popup failed, trying redirect:', error);
-			// Fallback to redirect
-			await signInWithRedirect(this.auth, provider);
+			throw error;
 		}
-	}
-
-	async handleGoogleRedirect(): Promise<User | null> {
-		try {
-			const result = await getRedirectResult(this.auth);
-			if (result?.user) {
-				this.currentUser.next(result.user);
-				return result.user;
-			}
-		} catch (error) {
-			console.error('Redirect error:', error);
-		}
-		return null;
 	}
 
 	logout(): Promise<void> {

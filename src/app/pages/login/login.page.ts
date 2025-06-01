@@ -22,7 +22,6 @@ import {
 	IonIcon
 } from '@ionic/angular/standalone';
 
-
 @Component({
 	selector: 'app-login',
 	templateUrl: './login.page.html',
@@ -49,7 +48,6 @@ import {
 		IonIcon
 	],
 })
-
 export class LoginPage implements OnInit {
 	email: string = '';
 	password: string = '';
@@ -62,16 +60,12 @@ export class LoginPage implements OnInit {
 	) { }
 
 	async ngOnInit() {
-		// Handle Google redirect result (for Safari/PWA)
 		this.loading = true;
 		try {
-			const user = await this.auth.handleGoogleRedirect();
-			if (user) {
-				this.router.navigate(['/home']);
-				return;
-			}
+			const currentUser = this.auth.getCurrentUser();
 		} catch (err) {
-			this.error = 'Google sign-in failed. Please try again.';
+			// Handle error silently
+			console.error(err)
 		} finally {
 			this.loading = false;
 		}
@@ -82,7 +76,6 @@ export class LoginPage implements OnInit {
 		this.error = null;
 		try {
 			await this.auth.login(this.email, this.password);
-			this.router.navigate(['/home']);
 		} catch (err) {
 			this.error = 'Invalid email or password. Please try again.';
 		} finally {
@@ -95,7 +88,6 @@ export class LoginPage implements OnInit {
 		this.error = null;
 		try {
 			await this.auth.loginWithGoogle();
-			this.router.navigate(['/home']);
 		} catch (err) {
 			this.error = 'Google sign-in failed. Please try again.';
 		} finally {
