@@ -33,6 +33,7 @@ import {
   IonCardContent,
   IonCheckbox,
   IonPopover,
+  IonTextarea,
 } from '@ionic/angular/standalone';
 
 @Component({
@@ -66,6 +67,7 @@ import {
     IonCardContent,
     IonCheckbox,
     IonPopover,
+    IonTextarea,
   ],
 })
 export class TodoPage implements OnInit, OnDestroy {
@@ -78,8 +80,10 @@ export class TodoPage implements OnInit, OnDestroy {
 
   // Form state
   newTodoTitle = '';
+  newTodoDescription = '';
   editingTodo: Todo | null = null;
   editTodoTitle = '';
+  editTodoDescription = '';
   showAddTodoModal = false;
   selectedTodo: Todo | null = null;
 
@@ -165,27 +169,36 @@ export class TodoPage implements OnInit, OnDestroy {
   // Todo actions
   addTodo(): void {
     if (!this.newTodoTitle.trim() || !this.project) return;
-    this.data.addTodo(this.newTodoTitle, this.project.id, 'new')
-      .then(() => this.newTodoTitle = '');
+    this.data.addTodo(this.newTodoTitle, this.project.id, 'new', this.newTodoDescription)
+      .then(() => {
+        this.newTodoTitle = '';
+        this.newTodoDescription = '';
+      });
   }
 
   editT(todo: Todo): void {
     this.editingTodo = todo;
     this.editTodoTitle = todo.title;
+    this.editTodoDescription = todo.description || '';
   }
 
   updateTodo(): void {
     if (!this.editingTodo || !this.editTodoTitle.trim()) return;
-    this.data.updateTodo(this.editingTodo.id, { title: this.editTodoTitle })
+    this.data.updateTodo(this.editingTodo.id, {
+      title: this.editTodoTitle,
+      description: this.editTodoDescription
+    })
       .then(() => {
         this.editingTodo = null;
         this.editTodoTitle = '';
+        this.editTodoDescription = '';
       });
   }
 
   cancelTodoEdit(): void {
     this.editingTodo = null;
     this.editTodoTitle = '';
+    this.editTodoDescription = '';
   }
 
   archiveTodo(id: string): void {

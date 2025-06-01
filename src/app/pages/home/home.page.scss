@@ -187,15 +187,3 @@ ion-fab {
 	top: 90%;
 	right: 20px;
 }
-
-.add-section {
-	background-color: #fff;
-	padding: 16px;
-	margin: 16px auto;
-
-	&.add-project {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-}

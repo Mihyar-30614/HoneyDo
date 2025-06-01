@@ -1,11 +1,5 @@
-/* Todo Page Styles */
-
-:host {
-	display: block;
-}
-
 ion-content {
-	--padding-bottom: 80px; // Add padding at the bottom to account for FAB
+	--padding-bottom: 80px;
 }
 
 .stat-content {
@@ -66,6 +60,8 @@ ion-card {
 	margin: 8px 0;
 	width: 100%;
 	transition: transform 0.2s, box-shadow 0.2s;
+	user-select: none;
+	cursor: pointer;
 
 	&:hover {
 		transform: translateY(-2px);

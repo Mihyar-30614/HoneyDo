@@ -73,17 +73,17 @@
 	<ion-grid>
 		<ion-row>
 			<ion-col size="12" *ngFor="let todo of todos | orderBy: ['status']: ['in-progress', 'new', 'done']">
-				<div class="todo-item" [class]="todo.status">
+				<div class="todo-item" [class]="todo.status" (click)="editT(todo)">
 					<ion-checkbox slot="start" [checked]="todo.status === 'done'"
-						(ionChange)="cycleStatus(todo)"></ion-checkbox>
+						(ionChange)="cycleStatus(todo); $event.stopPropagation()"></ion-checkbox>
 					<ion-label>
 						<h2 [class.line-through]="todo.status === 'done'">{{ todo.title }}</h2>
 						<p>Created: {{ todo.createdAt?.toDate() | date:'short' }}</p>
 					</ion-label>
-					<ion-badge class="status-badge" [class]="todo.status" (click)="cycleStatus(todo)">
+					<ion-badge class="status-badge" [class]="todo.status" (click)="cycleStatus(todo); $event.stopPropagation()">
 						{{ todo.status }}
 					</ion-badge>
-					<ion-button fill="clear" size="small" class="actions-menu" (click)="openTodoActions(todo)">
+					<ion-button fill="clear" size="small" class="actions-menu" (click)="openTodoActions(todo); $event.stopPropagation()">
 						<ion-icon name="ellipsis-vertical"></ion-icon>
 					</ion-button>
 				</div>
@@ -101,7 +101,7 @@
 	<ion-grid *ngIf="archivedTodos.length > 0">
 		<ion-row>
 			<ion-col size="12" *ngFor="let todo of archivedTodos">
-				<div class="todo-item">
+				<div class="todo-item" (click)="editT(todo)">
 					<ion-label>
 						<h2>{{ todo.title }}</h2>
 						<p>Created: {{ todo.createdAt?.toDate() | date:'short' }}</p>
@@ -110,10 +110,10 @@
 						{{ todo.status }}
 					</ion-badge>
 					<div class="actions">
-						<ion-button fill="clear" (click)="unarchiveTodo(todo.id)">
+						<ion-button fill="clear" (click)="unarchiveTodo(todo.id); $event.stopPropagation()">
 							<ion-icon name="refresh"></ion-icon>
 						</ion-button>
-						<ion-button fill="clear" (click)="deleteTodo(todo.id)">
+						<ion-button fill="clear" (click)="deleteTodo(todo.id); $event.stopPropagation()">
 							<ion-icon name="trash"></ion-icon>
 						</ion-button>
 					</div>
@@ -153,13 +153,24 @@
 					autocorrect="on"
 					spellcheck="true"
 				/>
+				<ion-textarea
+					[(ngModel)]="newTodoDescription"
+					placeholder="Add a description (optional)"
+					label="Description"
+					labelPlacement="stacked"
+					fill="outline"
+					rows="4"
+					class="ion-margin-top"
+					autocorrect="on"
+					spellcheck="true"
+				/>
 				<ion-button
 					expand="block"
 					(click)="addTodo(); showAddTodoModal = false"
 					[disabled]="!newTodoTitle.trim()"
 					fill="clear"
-					class="hd-button"
-					>
+					class="hd-button ion-margin-top"
+				>
 					Add Todo
 				</ion-button>
 			</ion-content>
@@ -182,16 +193,28 @@
 					[(ngModel)]="editTodoTitle"
 					placeholder="Todo title"
 					label="Title"
-					labelPlacement="floating"
+					labelPlacement="stacked"
 					fill="outline"
 					inputmode="text"
 					autocorrect="on"
 					spellcheck="true"
 					autocomplete="on"
 				/>
+				<ion-textarea
+					[(ngModel)]="editTodoDescription"
+					placeholder="Add a description (optional)"
+					label="Description"
+					labelPlacement="stacked"
+					fill="outline"
+					rows="8"
+					class="ion-margin-top"
+					autocorrect="on"
+					spellcheck="true"
+				/>
 				<ion-button
 					fill="clear"
-					(click)="updateTodo()" [disabled]="!editTodoTitle.trim()"
+					(click)="updateTodo()"
+					[disabled]="!editTodoTitle.trim()"
 					class="hd-button ion-margin-top"
 				>
 					Save Changes

@@ -88,7 +88,7 @@ export class DataService {
 	/**
 	 * Adds a new todo defaulting to not archived.
 	 */
-	addTodo(title: string, projectId: string, status: 'new' | 'in-progress' | 'done' = 'new') {
+	addTodo(title: string, projectId: string, status: 'new' | 'in-progress' | 'done' = 'new', description?: string) {
 		const userId = this.auth.currentUser?.uid;
 		if (!userId) {
 			return Promise.reject('User not authenticated');
@@ -99,6 +99,7 @@ export class DataService {
 			archived: false,
 			projectId,
 			ownerId: userId,
+			description: description || '',
 			createdAt: serverTimestamp(),
 		});
 	}
