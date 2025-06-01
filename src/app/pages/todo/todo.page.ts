@@ -110,6 +110,7 @@ export class TodoPage implements OnInit, OnDestroy {
     if ((event.ctrlKey || event.metaKey) && event.key === '/') {
       event.preventDefault();
       this.showAddTodoModal = true;
+      this.focusNewTodoInput();
     }
   }
 
@@ -208,6 +209,13 @@ export class TodoPage implements OnInit, OnDestroy {
 
   openTodoActions(todo: Todo): void {
     this.selectedTodo = todo;
+  }
+
+  // Focus management
+  focusNewTodoInput(): void {
+    setTimeout(() => {
+      this.newTodoInput?.setFocus();
+    }, 100);
   }
 
   // Getters for todo counts

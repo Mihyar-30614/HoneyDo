@@ -130,31 +130,36 @@
 	</ion-fab>
 
 	<!-- Add Todo Modal -->
-	<ion-modal [isOpen]="showAddTodoModal" (didDismiss)="showAddTodoModal = false" mode="ios">
+	<ion-modal [isOpen]="showAddTodoModal" (didDismiss)="showAddTodoModal = false">
 		<ng-template>
-			<ion-header>
+			<ion-header class="ion-no-border">
 				<ion-toolbar>
-					<ion-title>New Todo</ion-title>
+					<ion-title class="ion-text-center">Add Todo</ion-title>
 					<ion-buttons slot="end">
-						<ion-button (click)="showAddTodoModal = false">Cancel</ion-button>
+						<ion-button (click)="showAddTodoModal = false">Close</ion-button>
 					</ion-buttons>
 				</ion-toolbar>
 			</ion-header>
 			<ion-content class="ion-padding">
-				<ion-item>
-					<ion-input
-						[(ngModel)]="newTodoTitle"
-						placeholder="Todo title"
-						label="Title"
-						labelPlacement="floating"
-						(keyup.enter)="addTodo(); showAddTodoModal = false;"
-						inputmode="text"
-						autocorrect="on"
-						spellcheck="true"
-						autocomplete="on">
-					</ion-input>
-				</ion-item>
-				<ion-button fill="clear" expand="block" (click)="addTodo(); showAddTodoModal = false;" [disabled]="!newTodoTitle.trim()" class="hd-button">
+				<ion-input
+					#newTodoInput
+					[(ngModel)]="newTodoTitle"
+					placeholder="Enter todo title"
+					label="Todo Title"
+					labelPlacement="stacked"
+					fill="outline"
+					(keyup.enter)="addTodo(); showAddTodoModal = false"
+					autocomplete="on"
+					autocorrect="on"
+					spellcheck="true"
+				/>
+				<ion-button
+					expand="block"
+					(click)="addTodo(); showAddTodoModal = false"
+					[disabled]="!newTodoTitle.trim()"
+					fill="clear"
+					class="hd-button"
+					>
 					Add Todo
 				</ion-button>
 			</ion-content>
@@ -164,28 +169,31 @@
 	<!-- Edit Todo Modal -->
 	<ion-modal [isOpen]="editingTodo !== null" (didDismiss)="cancelTodoEdit()">
 		<ng-template>
-			<ion-header>
+			<ion-header class="ion-no-border">
 				<ion-toolbar>
-					<ion-title>Edit Todo</ion-title>
+					<ion-title class="ion-text-center">Edit Todo</ion-title>
 					<ion-buttons slot="end">
 						<ion-button (click)="cancelTodoEdit()">Cancel</ion-button>
 					</ion-buttons>
 				</ion-toolbar>
 			</ion-header>
 			<ion-content class="ion-padding">
-				<ion-item>
-					<ion-input
-						[(ngModel)]="editTodoTitle"
-						placeholder="Todo title"
-						label="Title"
-						labelPlacement="floating"
-						inputmode="text"
-						autocorrect="on"
-						spellcheck="true"
-						autocomplete="on">
-					</ion-input>
-				</ion-item>
-				<ion-button fill="clear" expand="block" (click)="updateTodo()" [disabled]="!editTodoTitle.trim()" class="hd-button">
+				<ion-input
+					[(ngModel)]="editTodoTitle"
+					placeholder="Todo title"
+					label="Title"
+					labelPlacement="floating"
+					fill="outline"
+					inputmode="text"
+					autocorrect="on"
+					spellcheck="true"
+					autocomplete="on"
+				/>
+				<ion-button
+					fill="clear"
+					(click)="updateTodo()" [disabled]="!editTodoTitle.trim()"
+					class="hd-button ion-margin-top"
+				>
 					Save Changes
 				</ion-button>
 			</ion-content>
