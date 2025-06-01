@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import * as allIcons from 'ionicons/icons';
@@ -13,7 +13,7 @@ import { PwaInstallBannerComponent } from './components/pwa-install-banner/pwa-i
 	templateUrl: 'app.component.html',
 	imports: [IonApp, IonRouterOutlet, CommonModule, PwaInstallBannerComponent],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 	deferredPrompt: any = null;
 	showInstallBanner = false;
 	public isIos = false;
@@ -66,6 +66,11 @@ export class AppComponent {
 				this.showInstallBanner = false;
 			});
 		});
+	}
+
+	async ngOnInit() {
+		// Handle any pending redirect results
+		await this.auth.handleGoogleRedirect();
 	}
 
 	private checkIos(): boolean {

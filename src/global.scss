@@ -50,6 +50,12 @@ ion-header {
 	background-color: var(--ion-background-color);
 }
 
+ion-title {
+	font-size: 1.25rem;
+	font-weight: 600;
+	background-color: var(--ion-background-color);
+}
+
 .hd-button {
 	background: var(--ion-color-warning);
 	color: var(--ion-color-warning-contrast);

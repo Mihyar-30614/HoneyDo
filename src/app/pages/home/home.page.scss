@@ -1,14 +1,10 @@
-ion-title {
-	font-size: 1.25rem;
-	font-weight: 600;
-}
-
 .avatar-button {
 	border-radius: 50%;
 	width: 45px;
 	height: 45px;
 	background-color: var(--ion-color-warning);
-	font-size: 1rem;
+	color: var(--ion-color-warning-contrast);
+	font-size: 1.1rem;
 	transition: transform 0.2s, box-shadow 0.2s;
 
 	&:hover {
@@ -150,15 +146,11 @@ ion-card {
 	right: 5px;
 	z-index: 1000;
 	width: 200px;
-	background: var(--ion-color-light);
+	background: var(--ion-background-color);
 	border-radius: 8px;
+	border: 1px solid var(--ion-color-light-shade);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 	overflow: hidden;
-
-	ion-list {
-		padding: 8px 0;
-		background: transparent;
-	}
 
 	ion-item {
 		--background: transparent;
@@ -169,7 +161,7 @@ ion-card {
 		margin: 0;
 
 		ion-icon {
-			font-size: 1.25rem;
+			font-size: 1.3rem;
 			margin-right: 16px;
 			color: var(--ion-color-medium);
 		}
