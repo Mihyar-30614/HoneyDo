@@ -56,7 +56,7 @@ export class LoginPage implements OnInit {
 
 	constructor(
 		private auth: AuthService,
-		private router: Router
+		public router: Router
 	) { }
 
 	async ngOnInit() {

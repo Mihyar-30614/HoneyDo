@@ -42,7 +42,7 @@ export class SignupPage implements OnInit {
 
 	constructor(
 		private auth: AuthService,
-		private router: Router,
+		public router: Router,
 		private fb: FormBuilder
 	) {
 		this.signupForm = this.fb.group({
