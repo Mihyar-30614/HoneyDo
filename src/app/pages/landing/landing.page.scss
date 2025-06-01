@@ -60,23 +60,23 @@
 }
 
 .text-dark {
-	color: #1f2937; // Tailwind's gray-800
+	color: var(--ion-text-color);
 }
 
 .text-accent {
-	color: #facc15; // Tailwind's yellow-500
+	color: var(--ion-text-yellow);
 }
 
 .content-box p {
 	margin-top: 1.5rem;
 	font-size: 1.125rem;
-	color: #4b5563; // Tailwind's gray-600
+	color: var(--ion-text-color);
 }
 
 .get-started-btn {
 	padding: 0.75rem 2rem;
-	background-color: #facc15;
-	color: #1f2937;
+	background-color: var(--ion-text-yellow);
+	color: var(--ion-text-color);
 	font-weight: 600;
 	border-radius: 0.5rem;
 	transition: all 0.3s ease-in-out;
@@ -109,7 +109,7 @@
 .shape-1 {
 	width: 8rem;
 	height: 8rem;
-	color: #facc15;
+	color: var(--ion-text-yellow);
 	opacity: 0.8;
 	top: 20%;
 	left: 30%;

@@ -1,4 +1,4 @@
-.login-card {
+ion-card {
 	width: 90%;
 	max-width: 600px;
 	margin: 2rem auto;
@@ -9,15 +9,17 @@
 	ion-card-header {
 		text-align: center;
 		margin-bottom: 1rem;
+		padding: 1rem;
 
 		ion-card-title {
 			font-size: 1.75rem;
-			color: #b7791f; // dark yellow
 			font-weight: bold;
+			margin-top: 0.5rem;
 		}
 
 		ion-card-subtitle {
 			color: #555;
+			margin-top: 0.25rem;
 		}
 	}
 }
@@ -51,10 +53,11 @@ form {
 
 .footer p {
 	font-size: 0.9rem;
-	color: var(--ion-color-medium, #777);
+	color: var(--ion-text-color);
 }
 
 .footer a {
 	font-weight: 600;
 	text-decoration: none;
+	color: var(--ion-color-warning);
 }

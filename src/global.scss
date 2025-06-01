@@ -66,8 +66,8 @@ ion-title {
 	transition: all 0.2s ease;
 	white-space: nowrap;
 	pointer-events: auto;
-	z-index: 1000000;
-	display: inline-block;
+	z-index: 10;
+	width: 100%;
 
 	&:hover {
 		background: var(--ion-color-warning-shade);
@@ -76,5 +76,18 @@ ion-title {
 
 	&:active {
 		transform: translateY(0);
+	}
+}
+
+.logo {
+	width: 180px;
+	height: auto;
+	margin: 0 auto 1.5rem;
+	display: block;
+	filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+	transition: transform 0.3s ease;
+
+	&:hover {
+		transform: scale(1.02);
 	}
 }

@@ -3,7 +3,8 @@
 	width: 45px;
 	height: 45px;
 	background-color: var(--ion-color-warning);
-	color: var(--ion-color-warning-contrast);
+	color: var(--ion-text-color);
+	--color: var(--ion-text-color);
 	font-size: 1.1rem;
 	transition: transform 0.2s, box-shadow 0.2s;
 

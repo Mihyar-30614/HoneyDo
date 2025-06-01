@@ -7,23 +7,22 @@
 </ion-header>
 
 <ion-content>
-	<ion-card class="login-card">
+	<ion-card>
 		<ion-card-header class="ion-text-center">
-			<ion-card-title class="highlight-text">Welcome Back!</ion-card-title>
+			<img src="assets/icon/logo_trans.png" alt="HoneyDo Logo" class="logo">
+			<ion-card-title>Welcome Back!</ion-card-title>
 			<ion-card-subtitle>We're happy to see you again</ion-card-subtitle>
 		</ion-card-header>
 
 		<ion-card-content>
 			<form (ngSubmit)="handleSubmit()" class="ion-margin-top">
 			<ion-button
-				expand="block"
-				fill="solid"
-				shape="round"
-				color="warning"
+				fill="clear"
+				class="hd-button"
 				(click)="handleGoogleSignIn()"
 				[disabled]="loading">
 				<ion-icon slot="start" name="logo-google"></ion-icon>
-				Continue with Google
+				<ion-text>Continue with Google</ion-text>
 			</ion-button>
 
 			<div class="separator">
@@ -52,15 +51,13 @@
 					[(ngModel)]="password"
 					name="password"
 					[disabled]="loading">
-					<ion-input-password-toggle slot="end"></ion-input-password-toggle>
+					<ion-input-password-toggle color="medium" slot="end"></ion-input-password-toggle>
 				</ion-input>
 
 				<ion-button
-					expand="block"
 					type="submit"
-					fill="solid"
-					color="warning"
-					class="ion-margin-top"
+					fill="clear"
+					class="hd-button"
 					[disabled]="loading">
 					{{ loading ? 'Signing in...' : 'Sign In' }}
 				</ion-button>
@@ -72,7 +69,9 @@
 
 			<div class="footer ion-text-center ion-margin-top">
 				<p>Don't have an account? <a [routerLink]="['/signup']">Create one</a></p>
-				<ion-button fill="clear" expand="block" routerLink="/forgot-password">Forgot Password?</ion-button>
+				<ion-button color="warning" fill="clear" expand="block" routerLink="/forgot-password">
+					<ion-text>Forgot Password?</ion-text>
+				</ion-button>
 			</div>
 		</ion-card-content>
 	</ion-card>

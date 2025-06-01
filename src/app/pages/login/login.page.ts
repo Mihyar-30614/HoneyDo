@@ -92,11 +92,11 @@ export class LoginPage implements OnInit {
 
 	async handleGoogleSignIn() {
 		this.loading = true;
+		this.error = null;
 		try {
 			await this.auth.loginWithGoogle();
-			this.router.navigate(['/home']); // ← redirect on social-login
+			this.router.navigate(['/home']);
 		} catch (err) {
-			console.error('Google sign-in failed', err);
 			this.error = 'Google sign-in failed. Please try again.';
 		} finally {
 			this.loading = false;

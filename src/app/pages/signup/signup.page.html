@@ -9,7 +9,8 @@
 <ion-content>
 	<ion-card class="signup-card">
 		<ion-card-header>
-			<ion-card-title class="signup-title">Welcome!</ion-card-title>
+			<img src="assets/icon/logo_trans.png" alt="HoneyDo Logo" class="logo">
+			<ion-card-title>Welcome!</ion-card-title>
 			<ion-card-subtitle>Join us to get started</ion-card-subtitle>
 		</ion-card-header>
 
@@ -17,8 +18,11 @@
 			<form [formGroup]="signupForm" (ngSubmit)="handleSubmit()">
 
 				<!-- Google Sign-In -->
-				<ion-button expand="block" fill="solid" color="warning" [disabled]="loading"
-					(click)="handleGoogleSignIn()" class="google-signin-btn">
+				<ion-button
+					fill="clear"
+					[disabled]="loading"
+					(click)="handleGoogleSignIn()"
+					class="hd-button">
 					<ion-icon slot="start" name="logo-google"></ion-icon>
 					Continue with Google
 				</ion-button>
@@ -75,17 +79,15 @@
 				</ion-text>
 
 				<ion-button
-					expand="block"
 					type="submit"
 					[disabled]="loading || signupForm.invalid"
-					fill="solid"
-					color="warning"
-					class="signup-btn">
+					fill="clear"
+					class="hd-button">
 					{{ loading ? 'Signing up...' : 'Sign Up' }}
 				</ion-button>
 			</form>
 
-			<div class="footer">
+			<div class="footer ion-text-center ion-margin-top">
 				<p>Already have an account? <a [routerLink]="['/login']">Log in</a></p>
 			</div>
 		</ion-card-content>

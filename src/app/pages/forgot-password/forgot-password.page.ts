@@ -6,7 +6,6 @@ import { AuthService } from '../../services/auth.service';
 import {
   IonHeader,
   IonToolbar,
-  IonTitle,
   IonContent,
   IonButton,
   IonInput,
@@ -14,20 +13,18 @@ import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
-  IonCardContent
-} from '@ionic/angular/standalone';
+  IonCardContent, IonBackButton, IonButtons, IonCardSubtitle } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.page.html',
   styleUrls: ['./forgot-password.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonCardSubtitle, IonButtons, IonBackButton,
     CommonModule,
     FormsModule,
     IonHeader,
     IonToolbar,
-    IonTitle,
     IonContent,
     IonButton,
     IonInput,

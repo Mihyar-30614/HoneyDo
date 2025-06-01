@@ -69,8 +69,11 @@ export class AppComponent implements OnInit {
 	}
 
 	async ngOnInit() {
-		// Handle any pending redirect results
-		await this.auth.handleGoogleRedirect();
+		// Initialize auth and handle any pending redirects
+		const user = await this.auth.initializeAuth();
+		if (user) {
+			await this.router.navigate(['/home']);
+		}
 	}
 
 	private checkIos(): boolean {
