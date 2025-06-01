@@ -1,106 +1,93 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/landing"></ion-back-button>
-    </ion-buttons>
-  </ion-toolbar>
+	<ion-toolbar>
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="/landing"></ion-back-button>
+		</ion-buttons>
+	</ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-card class="signup-card">
-    <ion-card-header>
-      <ion-card-title class="signup-title">Welcome!</ion-card-title>
-      <ion-card-subtitle>Join us to get started</ion-card-subtitle>
-    </ion-card-header>
+	<ion-card class="signup-card">
+		<ion-card-header>
+			<ion-card-title class="signup-title">Welcome!</ion-card-title>
+			<ion-card-subtitle>Join us to get started</ion-card-subtitle>
+		</ion-card-header>
 
-    <ion-card-content>
-      <!-- Google Sign-In -->
-      <ion-button
-        expand="block"
-        fill="solid"
-        color="warning"
-        [disabled]="loading"
-        (click)="handleGoogleSignIn()"
-        class="google-signin-btn"
-      >
-        <ion-icon slot="start" name="logo-google"></ion-icon>
-        Continue with Google
-      </ion-button>
+		<ion-card-content>
+			<form [formGroup]="signupForm" (ngSubmit)="handleSubmit()">
 
-      <!-- Separator -->
-      <div class="separator">
-        <div></div>
-        <span>OR</span>
-        <div></div>
-      </div>
+				<!-- Google Sign-In -->
+				<ion-button expand="block" fill="solid" color="warning" [disabled]="loading"
+					(click)="handleGoogleSignIn()" class="google-signin-btn">
+					<ion-icon slot="start" name="logo-google"></ion-icon>
+					Continue with Google
+				</ion-button>
 
-      <!-- Form -->
-      <form (ngSubmit)="handleSubmit()">
-        <ion-input
-          type="email"
-          required
-          [(ngModel)]="email"
-          name="email"
-          [disabled]="loading"
-          label="Email"
-          labelPlacement="stacked"
-          placeholder="Enter your email"
-          fill="outline"
-        ></ion-input>
+				<!-- Separator -->
+				<div class="separator">
+					<div></div>
+					<span>OR</span>
+					<div></div>
+				</div>
 
-        <ion-input
-          type="password"
-          required
-          [(ngModel)]="password"
-          (ngModelChange)="onPasswordInput($event)"
-          name="password"
-          [disabled]="loading"
-          label="Password"
-          labelPlacement="stacked"
-          placeholder="Enter your password"
-          fill="outline"
-        ></ion-input>
+				<!-- Form -->
+				<ion-input
+					type="email"
+					label="Email"
+					labelPlacement="stacked"
+					placeholder="Enter your email"
+					fill="outline"
+					formControlName="email"
+					[disabled]="loading"
+				/>
 
-        <ion-progress-bar [value]="passwordStrength" color="warning" class="password-bar"></ion-progress-bar>
-        <ion-text class="strength-text" [ngClass]="{
-          'strength-weak': passwordStrength < 0.4,
-          'strength-medium': passwordStrength >= 0.4 && passwordStrength < 0.8,
-          'strength-strong': passwordStrength >= 0.8
-        }">
-          Strength: {{ passwordStrengthLabel() }}
-        </ion-text>
+				<ion-input
+					type="password"
+					formControlName="password"
+					[disabled]="loading"
+					label="Password"
+					labelPlacement="stacked"
+					placeholder="Enter your password"
+					fill="outline">
+				</ion-input>
 
-        <ion-input
-          type="password"
-          required
-          [(ngModel)]="confirmPassword"
-          name="confirmPassword"
-          [disabled]="loading"
-          label="Confirm Password"
-          labelPlacement="stacked"
-          placeholder="Confirm your password"
-          fill="outline"
-        ></ion-input>
+				<ion-progress-bar [value]="passwordStrength" color="warning" class="password-bar"></ion-progress-bar>
+				<ion-text class="strength-text" [ngClass]="{
+					'strength-weak': passwordStrength < 0.4,
+					'strength-medium': passwordStrength >= 0.4 && passwordStrength < 0.8,
+					'strength-strong': passwordStrength >= 0.8
+				}">
+					Strength: {{ passwordStrengthLabel() }}
+				</ion-text>
 
-        <ion-text *ngIf="error" color="danger" class="error-text">
-          {{ error }}
-        </ion-text>
+				<ion-input
+					type="password"
+					formControlName="confirmPassword"
+					[disabled]="loading"
+					label="Confirm Password"
+					labelPlacement="stacked"
+					placeholder="Confirm your password"
+					fill="outline">
+				</ion-input>
 
-        <ion-button
-          expand="block"
-          type="submit"
-          [disabled]="loading"
-          fill="solid"
-          color="warning"
-          class="signup-btn"
-        >
-          {{ loading ? 'Signing up...' : 'Sign Up' }}
-        </ion-button>
-      </form>
+				<ion-text *ngIf="error" color="danger" class="error-text">
+					{{ error }}
+				</ion-text>
 
-      <div class="footer">
-        <p>Already have an account? <a [routerLink]="['/login']">Log in</a></p>
-      </div>
-    </ion-card-content>
-  </ion-card>
+				<ion-button
+					expand="block"
+					type="submit"
+					[disabled]="loading || signupForm.invalid"
+					fill="solid"
+					color="warning"
+					class="signup-btn">
+					{{ loading ? 'Signing up...' : 'Sign Up' }}
+				</ion-button>
+			</form>
+
+			<div class="footer">
+				<p>Already have an account? <a [routerLink]="['/login']">Log in</a></p>
+			</div>
+		</ion-card-content>
+	</ion-card>
 </ion-content>

@@ -1,46 +1,69 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
-import { IonHeader, IonCardTitle, IonBackButton, IonToolbar, IonButtons, IonContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonButton, IonIcon, IonProgressBar, IonText } from "@ionic/angular/standalone";
+import { IonHeader, IonCardTitle, IonBackButton, IonToolbar, IonButtons, IonContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonButton, IonIcon, IonProgressBar, IonText, IonInput } from "@ionic/angular/standalone";
 
 @Component({
 	selector: 'app-signup',
 	standalone: true,
-	imports: [IonText, IonProgressBar, IonIcon, IonButton, IonCardContent, IonCardSubtitle, IonCardHeader, IonCard, IonContent, IonButtons, IonToolbar, IonBackButton, IonCardTitle, IonHeader,  CommonModule, FormsModule, RouterModule],
+	imports: [
+		IonText,
+		IonProgressBar,
+		IonIcon,
+		IonButton,
+		IonCardContent,
+		IonCardSubtitle,
+		IonCardHeader,
+		IonCard,
+		IonContent,
+		IonButtons,
+		IonToolbar,
+		IonBackButton,
+		IonCardTitle,
+		IonHeader,
+		IonInput,
+		CommonModule,
+		FormsModule,
+		ReactiveFormsModule,
+		RouterModule
+	],
 	templateUrl: './signup.page.html',
 	styleUrls: ['./signup.page.scss'],
 })
 export class SignupPage implements OnInit {
-	email = '';
-	password = '';
-	confirmPassword = '';
+	signupForm: FormGroup;
 	loading = false;
 	error: string | null = null;
+	passwordStrength = 0;
 
-	/**
-	 * Regex to enforce password complexity:
-	 * - Minimum 8 characters
-	 * - At least one uppercase letter
-	 * - At least one lowercase letter
-	 * - At least one number
-	 * - At least one special character
-	 */
 	private passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
 	constructor(
 		private auth: AuthService,
-		private router: Router
-	) { }
+		private router: Router,
+		private fb: FormBuilder
+	) {
+		this.signupForm = this.fb.group({
+			email: ['', [Validators.required, Validators.email]],
+			password: ['', [Validators.required, Validators.pattern(this.passwordPattern)]],
+			confirmPassword: ['', [Validators.required]]
+		});
+	}
 
-	ngOnInit() { }
+	ngOnInit() {
+		// Subscribe to password changes to update strength
+		this.signupForm.get('password')?.valueChanges.subscribe(value => {
+			this.onPasswordInput(value);
+		});
+	}
 
 	async handleGoogleSignIn() {
 		this.loading = true;
 		try {
 			await this.auth.loginWithGoogle();
-			this.router.navigate(['/home']); // ← redirect on social-login
+			this.router.navigate(['/home']);
 		} catch (err) {
 			console.error('Google sign-in failed', err);
 			this.error = 'Google sign-in failed. Please try again.';
@@ -50,27 +73,23 @@ export class SignupPage implements OnInit {
 	}
 
 	async handleSubmit() {
-		this.loading = true;
-		this.error = null;
-
-		// Check password complexity
-		if (!this.passwordPattern.test(this.password)) {
-			this.error = 'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.';
-			this.loading = false;
+		if (this.signupForm.invalid) {
 			return;
 		}
 
-		// Confirm password match
-		if (this.password !== this.confirmPassword) {
+		this.loading = true;
+		this.error = null;
+
+		const { email, password, confirmPassword } = this.signupForm.value;
+
+		if (password !== confirmPassword) {
 			this.error = 'Passwords do not match.';
 			this.loading = false;
 			return;
 		}
 
 		try {
-			// Create the new user
-			await this.auth.signUp(this.email, this.password);
-			// Now the user is authenticated—send them home:
+			await this.auth.signUp(email, password);
 			this.router.navigate(['/home']);
 		} catch (err) {
 			console.error('Sign-up failed', err);
@@ -80,12 +99,7 @@ export class SignupPage implements OnInit {
 		}
 	}
 
-	// In SignupPage class
-	passwordStrength = 0;  // range 0 to 1
-
-	/** Called on each password change */
 	onPasswordInput(value: string) {
-		this.password = value;
 		let score = 0;
 		if (/[a-z]/.test(value)) score++;
 		if (/[A-Z]/.test(value)) score++;
@@ -95,11 +109,9 @@ export class SignupPage implements OnInit {
 		this.passwordStrength = Math.min(score / 5, 1);
 	}
 
-	/** Returns a label based on the current strength */
 	passwordStrengthLabel(): string {
 		if (this.passwordStrength < 0.4) return 'Weak';
 		if (this.passwordStrength < 0.8) return 'Medium';
 		return 'Strong';
 	}
-
 }
