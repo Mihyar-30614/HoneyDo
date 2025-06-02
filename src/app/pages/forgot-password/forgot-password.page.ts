@@ -16,15 +16,14 @@ import {
   IonCardContent,
   IonInput,
   IonText,
-  IonIcon
-} from '@ionic/angular/standalone';
+  IonIcon, IonButtons } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.page.html',
   styleUrls: ['./forgot-password.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonButtons,
     CommonModule,
     FormsModule,
     RouterModule,

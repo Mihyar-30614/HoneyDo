@@ -96,3 +96,7 @@ ion-back-button{
 		transform: scale(1.02);
 	}
 }
+
+.back-button{
+	--color: var(--ion-text-color);
+}

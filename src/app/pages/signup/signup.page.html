@@ -1,8 +1,11 @@
 <ion-header class="ion-no-border">
 	<ion-toolbar>
-		<ion-button (click)="router.navigate(['/login'])">
-			<ion-icon name="arrow-back"></ion-icon>
-		</ion-button>
+		<ion-buttons slot="start">
+			<ion-button fill="clear" class="back-button" (click)="router.navigate(['/login'])">
+				<ion-icon name="arrow-back"></ion-icon>
+				<ion-text>Back</ion-text>
+			</ion-button>
+		</ion-buttons>
 	</ion-toolbar>
 </ion-header>
 

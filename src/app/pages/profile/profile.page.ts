@@ -19,11 +19,6 @@ import {
   IonList,
   IonCard,
   IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonText,
   IonNote,
 } from '@ionic/angular/standalone';
@@ -50,11 +45,6 @@ import { AlertController } from '@ionic/angular';
     IonList,
     IonCard,
     IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
-    IonGrid,
-    IonRow,
-    IonCol,
     IonText,
     IonNote,
   ]

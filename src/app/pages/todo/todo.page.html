@@ -1,11 +1,12 @@
 <ion-header class="ion-no-border">
 	<ion-toolbar>
 		<ion-buttons slot="start">
-			<ion-button (click)="router.navigate(['/home'])">
+			<ion-button fill="clear" class="back-button" (click)="router.navigate(['/home'])">
 				<ion-icon name="arrow-back"></ion-icon>
+				<ion-text>Back</ion-text>
 			</ion-button>
 		</ion-buttons>
-		<ion-title class="ion-text-center">{{ project?.name || 'Todos' }}</ion-title>
+		<ion-title class="ion-text-center">Todo</ion-title>
 	</ion-toolbar>
 </ion-header>
 

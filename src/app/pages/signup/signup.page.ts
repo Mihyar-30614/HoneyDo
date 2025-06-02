@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
-import { IonHeader, IonCardTitle, IonBackButton, IonToolbar, IonButtons, IonContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonButton, IonIcon, IonProgressBar, IonText, IonInput } from "@ionic/angular/standalone";
+import { IonHeader, IonCardTitle, IonToolbar, IonButtons, IonContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonButton, IonIcon, IonProgressBar, IonText, IonInput } from "@ionic/angular/standalone";
 
 @Component({
 	selector: 'app-signup',
@@ -20,7 +20,6 @@ import { IonHeader, IonCardTitle, IonBackButton, IonToolbar, IonButtons, IonCont
 		IonContent,
 		IonButtons,
 		IonToolbar,
-		IonBackButton,
 		IonCardTitle,
 		IonHeader,
 		IonInput,

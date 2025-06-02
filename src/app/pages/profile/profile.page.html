@@ -1,8 +1,9 @@
 <ion-header class="ion-no-border">
 	<ion-toolbar>
 		<ion-buttons slot="start">
-			<ion-button (click)="router.navigate(['/home'])">
+			<ion-button fill="clear" class="back-button" (click)="router.navigate(['/home'])">
 				<ion-icon name="arrow-back"></ion-icon>
+				<ion-text>Back</ion-text>
 			</ion-button>
 		</ion-buttons>
 		<ion-title class="ion-text-center">Profile</ion-title>
@@ -20,12 +21,20 @@
 				<div class="profile-info">
 					<h2 *ngIf="!isEditing">{{ displayName || 'Set your name' }}</h2>
 					<ion-item *ngIf="isEditing" class="edit-name">
-						<ion-input [(ngModel)]="displayName" placeholder="Your name" label="Display Name"
-							labelPlacement="floating" inputmode="text" autocorrect="on" spellcheck="true"
-							autocomplete="on">
-						</ion-input>
+						<ion-input
+							[(ngModel)]="displayName"
+							placeholder="Your name"
+							label="Display Name"
+							labelPlacement="stacked"
+							inputmode="text"
+							autocomplete="on"
+							fill="outline"
+							class="ion-margin-top"
+						/>
 					</ion-item>
 					<ion-note>{{ email }}</ion-note>
+					<br>
+					<ion-note>Est. Since {{ user?.metadata?.creationTime | date:'mediumDate' }}</ion-note>
 				</div>
 			</ion-card-content>
 		</ion-card>
@@ -38,11 +47,24 @@
 			</ion-item>
 
 			<ion-item *ngIf="isEditing">
-				<ion-button slot="start" fill="clear" (click)="cancelEdit()">
+				<ion-button
+					slot="start"
+					fill="outline"
+					color="danger"
+					(click)="cancelEdit()"
+				>
 					<ion-icon name="close-outline"></ion-icon>
+					<ion-text>Cancel</ion-text>
 				</ion-button>
-				<ion-button slot="end" fill="clear" (click)="updateProfile()" [disabled]="!displayName.trim()">
+				<ion-button
+					slot="end"
+					fill="outline"
+					(click)="updateProfile()"
+					[disabled]="!displayName.trim()"
+					color="success"
+				>
 					<ion-icon name="checkmark-outline"></ion-icon>
+					<ion-text>Confirm</ion-text>
 				</ion-button>
 			</ion-item>
 
@@ -52,27 +74,54 @@
 			</ion-item>
 
 			<ion-item *ngIf="showPasswordUpdate">
-				<ion-label position="stacked">Current Password</ion-label>
-				<ion-input type="password" [(ngModel)]="currentPassword"
-					placeholder="Enter current password"></ion-input>
+				<ion-input
+					type="password"
+					[(ngModel)]="currentPassword"
+					placeholder="Enter current password"
+					label="Current Password"
+					labelPlacement="stacked"
+				/>
 			</ion-item>
 
 			<ion-item *ngIf="showPasswordUpdate">
-				<ion-label position="stacked">New Password</ion-label>
-				<ion-input type="password" [(ngModel)]="newPassword" placeholder="Enter new password"></ion-input>
+				<!-- <ion-label position="stacked">New Password</ion-label> -->
+				<ion-input
+					type="password"
+					[(ngModel)]="newPassword"
+					placeholder="Enter new password"
+					label="New Password"
+					labelPlacement="stacked"
+				/>
 			</ion-item>
 
 			<ion-item *ngIf="showPasswordUpdate">
-				<ion-label position="stacked">Confirm New Password</ion-label>
-				<ion-input type="password" [(ngModel)]="confirmPassword" placeholder="Confirm new password"></ion-input>
+				<ion-input
+					type="password"
+					[(ngModel)]="confirmPassword"
+					placeholder="Confirm new password"
+					label="Confirm New Password"
+					labelPlacement="stacked"
+				/>
 			</ion-item>
 
 			<ion-item *ngIf="showPasswordUpdate">
-				<ion-button slot="start" fill="clear" (click)="cancelPasswordUpdate()">
+				<ion-button
+					slot="start"
+					fill="outline"
+					color="danger"
+					(click)="cancelPasswordUpdate()"
+				>
+					<ion-text>Cancel</ion-text>
 					<ion-icon name="close-outline"></ion-icon>
 				</ion-button>
-				<ion-button slot="end" fill="clear" (click)="updatePassword()"
-					[disabled]="!currentPassword || !newPassword || !confirmPassword">
+				<ion-button
+					slot="end"
+					fill="outline"
+					color="success"
+					(click)="updatePassword()"
+					[disabled]="!currentPassword || !newPassword || !confirmPassword"
+				>
+					<ion-text>Confirm</ion-text>
 					<ion-icon name="checkmark-outline"></ion-icon>
 				</ion-button>
 			</ion-item>
@@ -83,29 +132,9 @@
 
 			<ion-item button detail="false" (click)="logout()">
 				<ion-icon name="log-out-outline" slot="start"></ion-icon>
-				<ion-label color="danger">Logout</ion-label>
+				<ion-label>Logout</ion-label>
 			</ion-item>
 		</ion-list>
 
-		<!-- Account Info -->
-		<ion-card>
-			<ion-card-header>
-				<ion-card-title>Account Information</ion-card-title>
-			</ion-card-header>
-			<ion-card-content>
-				<ion-grid>
-					<ion-row>
-						<ion-col size="6">
-							<ion-text color="medium">Email</ion-text>
-							<p>{{ email }}</p>
-						</ion-col>
-						<ion-col size="6">
-							<ion-text color="medium">Account Created</ion-text>
-							<p>{{ user?.metadata?.creationTime | date:'mediumDate' }}</p>
-						</ion-col>
-					</ion-row>
-				</ion-grid>
-			</ion-card-content>
-		</ion-card>
 	</div>
 </ion-content>

@@ -33,15 +33,14 @@ import {
   IonCardContent,
   IonCheckbox,
   IonPopover,
-  IonTextarea,
-} from '@ionic/angular/standalone';
+  IonTextarea, IonText } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-todo',
   templateUrl: './todo.page.html',
   styleUrls: ['./todo.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonText,
     CommonModule,
     FormsModule,
     OrderByPipe,
