@@ -43,6 +43,9 @@ yarn-error.log
 .settings/
 *.sublime-project
 *.sublime-workspace
+.firebase
+.nx
+.cursor
 
 # Visual Studio Code
 .vscode/*
