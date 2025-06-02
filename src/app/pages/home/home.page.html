@@ -49,7 +49,10 @@
 							<ion-button fill="clear" size="small" (click)="archiveProject(project.id); $event.stopPropagation()">
 								<ion-icon name="archive-outline"></ion-icon>
 							</ion-button>
-							<ion-button fill="clear" size="small" (click)="confirmDelete(project); $event.stopPropagation()">
+							<ion-button
+								fill="clear"
+								(click)="confirmDelete(project); $event.stopPropagation()"
+								class="ion-no-padding">
 								<ion-icon name="trash-outline"></ion-icon>
 							</ion-button>
 						</div>
@@ -89,7 +92,10 @@
 								<ion-icon name="refresh"></ion-icon>
 								Unarchive
 							</ion-button>
-							<ion-button fill="clear" size="small" (click)="confirmDelete(project)">
+							<ion-button
+								fill="clear"
+								(click)="confirmDelete(project); $event.stopPropagation()"
+								class="ion-no-padding">
 								<ion-icon name="trash-outline"></ion-icon>
 							</ion-button>
 						</div>
@@ -106,51 +112,50 @@
 		</ion-fab-button>
 	</ion-fab>
 
-	<ion-modal [isOpen]="showAddProjectModal" (didDismiss)="showAddProjectModal = false">
+	<!-- Project Modal (Add/Edit) -->
+	<ion-modal [isOpen]="showAddProjectModal || editingProject !== null" (didDismiss)="cancelProjectEdit()">
 		<ng-template>
 			<ion-header class="ion-no-border">
 				<ion-toolbar>
-					<ion-title class="ion-text-center">New Project</ion-title>
+					<ion-title class="ion-text-center">{{ editingProject ? 'Edit Project' : 'Add Project' }}</ion-title>
 					<ion-buttons slot="end">
-						<ion-button (click)="showAddProjectModal = false">Cancel</ion-button>
+						<ion-button (click)="cancelProjectEdit()">Close</ion-button>
 					</ion-buttons>
 				</ion-toolbar>
 			</ion-header>
 			<ion-content class="ion-padding">
-				<ion-input
-					[(ngModel)]="newProjectName"
-					placeholder="Project name"
-					label="Name"
-					labelPlacement="stacked"
-					fill="outline"
-					class="ion-margin-bottom"
-					(keyup.enter)="addProject(); showAddProjectModal = false;"
-					inputmode="text"
-					autocorrect="on"
-					spellcheck="true"
-					autocomplete="on">
-				</ion-input>
-				<ion-textarea
-					[(ngModel)]="newProjectDescription"
-					placeholder="Project description (optional)"
-					label="Description"
-					labelPlacement="stacked"
-					fill="outline"
-					class="ion-margin-bottom"
-					rows="3"
-					inputmode="text"
-					autocorrect="on"
-					spellcheck="true"
-					autocomplete="on">
-				</ion-textarea>
-				<ion-button
-					expand="block"
-					fill="clear"
-					class="hd-button"
-					(click)="addProject(); showAddProjectModal = false;" [disabled]="!newProjectName.trim()"
+				<form (ngSubmit)="editingProject ? updateProject() : addProject()">
+					<ion-input
+						[ngModel]="editingProject ? editProjectName : newProjectName"
+						(ngModelChange)="editingProject ? editProjectName = $event : newProjectName = $event"
+						name="name"
+						label="Project Name"
+						labelPlacement="stacked"
+						placeholder="Enter project name"
+						fill="outline"
+						required
+					/>
+					<ion-textarea
+						[ngModel]="editingProject ? editProjectDescription : newProjectDescription"
+						(ngModelChange)="editingProject ? editProjectDescription = $event : newProjectDescription = $event"
+						name="description"
+						label="Description"
+						labelPlacement="stacked"
+						placeholder="Enter project description (optional)"
+						fill="outline"
+						rows="4"
+						class="ion-margin-top"
+					/>
+					<ion-button
+						expand="block"
+						type="submit"
+						[disabled]="editingProject ? !editProjectName.trim() : !newProjectName.trim()"
+						fill="clear"
+						class="hd-button ion-margin-top"
 					>
-					Add Project
-				</ion-button>
+						{{ editingProject ? 'Save Changes' : 'Add Project' }}
+					</ion-button>
+				</form>
 			</ion-content>
 		</ng-template>
 	</ion-modal>
@@ -168,38 +173,5 @@
 			</ion-item>
 		</ion-list>
 	</div>
-
-	<!-- Edit Project Modal -->
-	<ion-modal mode="ios" [isOpen]="editingProject !== null" (didDismiss)="cancelProjectEdit()">
-		<ng-template>
-			<ion-header>
-				<ion-toolbar>
-					<ion-title>Edit Project</ion-title>
-					<ion-buttons slot="end">
-						<ion-button (click)="cancelProjectEdit()">Cancel</ion-button>
-					</ion-buttons>
-				</ion-toolbar>
-			</ion-header>
-			<ion-content class="ion-padding">
-				<div class="add-section add-project">
-					<ion-input [(ngModel)]="editProjectName" placeholder="Project name"
-						(ionChange)="editProjectName = $event.detail.value || ''"
-						inputmode="text"
-						autocorrect="on"
-						spellcheck="true"
-						autocomplete="on"></ion-input>
-					<ion-textarea [(ngModel)]="editProjectDescription" placeholder="Project description"
-						rows="3"
-						inputmode="text"
-						autocorrect="on"
-						spellcheck="true"
-						autocomplete="on"></ion-textarea>
-					<ion-button expand="block" (click)="updateProject()" [disabled]="!editProjectName.trim()">
-						Save Changes
-					</ion-button>
-				</div>
-			</ion-content>
-		</ng-template>
-	</ion-modal>
 
 </ion-content>

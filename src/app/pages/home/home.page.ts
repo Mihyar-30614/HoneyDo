@@ -19,7 +19,6 @@ import {
 	IonList,
 	IonItem,
 	IonLabel,
-	IonBadge,
 	IonInput,
 	IonTextarea,
 	IonGrid,
@@ -34,6 +33,7 @@ import {
 	IonCard,
 	IonCardContent,
 	IonCardHeader,
+	IonAlert
 } from '@ionic/angular/standalone';
 import { AlertController } from '@ionic/angular';
 
@@ -69,7 +69,8 @@ import { AlertController } from '@ionic/angular';
 		IonTextarea,
 		IonModal,
 		IonFab,
-		IonFabButton
+		IonFabButton,
+		IonAlert
 	],
 })
 export class HomePage implements OnInit {
@@ -205,6 +206,7 @@ export class HomePage implements OnInit {
 			.then(() => {
 				this.newProjectName = '';
 				this.newProjectDescription = '';
+				this.showAddProjectModal = false;
 			});
 	}
 
@@ -240,6 +242,10 @@ export class HomePage implements OnInit {
 	cancelProjectEdit(): void {
 		this.editingProject = null;
 		this.editProjectName = '';
+		this.editProjectDescription = '';
+		this.showAddProjectModal = false;
+		this.newProjectName = '';
+		this.newProjectDescription = '';
 	}
 
 	archiveProject(id: string): void {
@@ -302,6 +308,7 @@ export class HomePage implements OnInit {
 	}
 
 	private deleteProject(id: string): void {
+		if (!this.user) return;
 		this.data.deleteProject(id)
 			.then(() => {
 				// Project will be removed from the list automatically through the subscription

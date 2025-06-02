@@ -11,6 +11,8 @@ import {
 	updateDoc,
 	deleteDoc,
 	serverTimestamp,
+	getDocs,
+	getDoc,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Project } from '../models/project.model';
@@ -57,11 +59,58 @@ export class DataService {
 	}
 
 	/**
-	 * Permanently deletes a project. Does not cascade to todos.
-	 * For archiving, use updateProject(id, { archived: true }).
+	 * Gets a single project by ID
 	 */
-	deleteProject(id: string) {
-		return deleteDoc(doc(this.fs, `projects/${id}`));
+	async getProject(projectId: string): Promise<Project | null> {
+		const projectRef = doc(this.fs, `projects/${projectId}`);
+		const projectSnap = await getDoc(projectRef);
+		if (!projectSnap.exists()) {
+			return null;
+		}
+		return { id: projectSnap.id, ...projectSnap.data() } as Project;
+	}
+
+	/**
+	 * Permanently deletes a project and its associated todos.
+	 */
+	async deleteProject(id: string) {
+		const userId = this.auth.currentUser?.uid;
+		if (!userId) {
+			return Promise.reject('User not authenticated');
+		}
+
+		// Get the project to verify ownership
+		const project = await this.getProject(id);
+		if (!project) {
+			return Promise.reject('Project not found');
+		}
+
+		if (project.ownerId !== userId) {
+			return Promise.reject('Not authorized to delete this project');
+		}
+
+		try {
+			// Delete all todos in the project
+			const todosQuery = query(
+				collection(this.fs, 'todos'),
+				where('projectId', '==', id),
+				where('ownerId', '==', userId) // Add owner check for todos
+			);
+			const todosSnapshot = await getDocs(todosQuery);
+
+			// Delete todos in parallel
+			const todoDeletions = todosSnapshot.docs.map(doc =>
+				deleteDoc(doc.ref)
+			);
+			await Promise.all(todoDeletions);
+
+			// Delete the project
+			const projectRef = doc(this.fs, `projects/${id}`);
+			await deleteDoc(projectRef);
+		} catch (error) {
+			console.error('Error in deleteProject:', error);
+			return Promise.reject(error);
+		}
 	}
 
 	/**
