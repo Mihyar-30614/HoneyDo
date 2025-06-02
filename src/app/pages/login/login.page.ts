@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -20,6 +20,7 @@ import {
 	IonInputPasswordToggle,
 	IonIcon
 } from '@ionic/angular/standalone';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
 	selector: 'app-login',
@@ -46,11 +47,13 @@ import {
 		IonIcon
 	],
 })
-export class LoginPage implements OnInit {
+export class LoginPage implements OnInit, OnDestroy {
 	email: string = '';
 	password: string = '';
 	loading: boolean = false;
 	error: string | null = null;
+
+	private authSubscription: Subscription | null = null;
 
 	constructor(
 		private auth: AuthService,
@@ -59,13 +62,18 @@ export class LoginPage implements OnInit {
 
 	async ngOnInit() {
 		this.loading = true;
-		try {
-			const currentUser = this.auth.getCurrentUser();
-		} catch (err) {
-			// Handle error silently
-			console.error(err)
-		} finally {
+		this.authSubscription = this.auth.user$.subscribe(user => {
 			this.loading = false;
+			if (user) {
+				// User is logged in, navigate away from login page
+				this.router.navigate(['/home']); // Or whichever page is appropriate
+			}
+		});
+	}
+
+	ngOnDestroy() {
+		if (this.authSubscription) {
+			this.authSubscription.unsubscribe();
 		}
 	}
 
