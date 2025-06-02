@@ -137,7 +137,7 @@
 				<ion-toolbar>
 					<ion-title class="ion-text-center">{{ editingTodo ? 'Edit Todo' : 'Add Todo' }}</ion-title>
 					<ion-buttons slot="end">
-						<ion-button (click)="cancelTodoEdit()">Close</ion-button>
+						<ion-button (click)="modalCtrl.dismiss()">Close</ion-button>
 					</ion-buttons>
 				</ion-toolbar>
 			</ion-header>

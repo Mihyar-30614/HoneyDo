@@ -32,7 +32,9 @@ import {
 	IonCardContent,
 	IonCheckbox,
 	IonPopover,
-	IonTextarea, IonText
+	IonTextarea,
+	IonText,
+	ModalController
 } from '@ionic/angular/standalone';
 
 @Component({
@@ -96,7 +98,8 @@ export class TodoPage implements OnInit, OnDestroy {
 		private auth: AuthService,
 		private data: DataService,
 		public router: Router,
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		public modalCtrl: ModalController
 	) { }
 
 	ngOnInit(): void {
@@ -173,6 +176,7 @@ export class TodoPage implements OnInit, OnDestroy {
 				this.newTodoTitle = '';
 				this.newTodoDescription = '';
 				this.showAddTodoModal = false;
+				this.modalCtrl.dismiss();
 			});
 	}
 
@@ -192,6 +196,7 @@ export class TodoPage implements OnInit, OnDestroy {
 				this.editingTodo = null;
 				this.editTodoTitle = '';
 				this.editTodoDescription = '';
+				this.modalCtrl.dismiss();
 			});
 	}
 
@@ -202,6 +207,7 @@ export class TodoPage implements OnInit, OnDestroy {
 		this.showAddTodoModal = false;
 		this.newTodoTitle = '';
 		this.newTodoDescription = '';
+		this.modalCtrl.dismiss();
 	}
 
 	archiveTodo(id: string): void {
