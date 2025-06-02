@@ -8,13 +8,12 @@ import {
 	signInWithEmailAndPassword,
 	GoogleAuthProvider,
 	signInWithPopup,
-	setPersistence,
-	browserLocalPersistence,
 	updateProfile,
 	updatePassword,
 	EmailAuthProvider,
 	reauthenticateWithCredential,
-	sendPasswordResetEmail as firebaseSendPasswordResetEmail
+	sendPasswordResetEmail as firebaseSendPasswordResetEmail,
+	onAuthStateChanged
 } from '@angular/fire/auth';
 import { Observable, BehaviorSubject } from 'rxjs';
 
@@ -25,17 +24,14 @@ export class AuthService {
 	private currentUser = new BehaviorSubject<User | null>(null);
 
 	constructor() {
-		// Initialize auth state
-		this.auth.onAuthStateChanged((user) => {
+		// Listen to auth state changes
+		onAuthStateChanged(this.auth, (user) => {
 			this.currentUser.next(user);
 		});
 	}
 
 	async initializeAuth() {
 		try {
-			// Set persistence to LOCAL
-			await setPersistence(this.auth, browserLocalPersistence);
-
 			const currentUser = this.auth.currentUser;
 			if (currentUser) {
 				this.currentUser.next(currentUser);
@@ -49,12 +45,18 @@ export class AuthService {
 
 	signUp(email: string, password: string): Promise<User> {
 		return createUserWithEmailAndPassword(this.auth, email, password)
-			.then((cred) => cred.user);
+			.then((cred) => {
+				this.currentUser.next(cred.user);
+				return cred.user;
+			});
 	}
 
 	login(email: string, password: string): Promise<User> {
 		return signInWithEmailAndPassword(this.auth, email, password)
-			.then((cred) => cred.user);
+			.then((cred) => {
+				this.currentUser.next(cred.user);
+				return cred.user;
+			});
 	}
 
 	async loginWithGoogle(): Promise<void> {
@@ -75,7 +77,9 @@ export class AuthService {
 	updateProfile(data: { displayName?: string }) {
 		const user = this.auth.currentUser;
 		if (!user) throw new Error('No user logged in');
-		return updateProfile(user, data);
+		return updateProfile(user, data).then(() => {
+			this.currentUser.next(user);
+		});
 	}
 
 	async updatePassword(currentPassword: string, newPassword: string) {

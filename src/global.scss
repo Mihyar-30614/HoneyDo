@@ -46,14 +46,16 @@ ion-card {
 	border-radius: 12px;
 }
 
-ion-header {
+ion-header, ion-toolbar {
 	background-color: var(--ion-background-color);
+	--background: var(--ion-background-color);
 }
 
 ion-title {
 	font-size: 1.25rem;
 	font-weight: 600;
 	background-color: var(--ion-background-color);
+	--background: var(--ion-background-color);
 }
 
 ion-back-button{
