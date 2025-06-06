@@ -60,7 +60,6 @@ ion-card {
 			align-items: center;
 			gap: 16px;
 			margin-top: auto;
-			margin-bottom: 16px;
 
 			ion-progress-bar {
 				flex: 1;
@@ -79,7 +78,7 @@ ion-card {
 
 	.card-footer {
 		border-top: 1px solid var(--ion-color-light-shade);
-		padding: 12px 16px;
+		padding: 6px 6px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
