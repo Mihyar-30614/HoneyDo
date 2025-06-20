@@ -3,5 +3,14 @@
     "@ionic/angular/common",
     "@ionic/angular"
   ],
-  "nxConsole.generateAiAgentRules": true
+  "nxConsole.generateAiAgentRules": true,
+  "chat.mcp.serverSampling": {
+    "HoneyDo/.cursor/mcp.json: nx-mcp": {
+      "allowedModels": [
+        "github.copilot-chat/gpt-4.1",
+        "github.copilot-chat/claude-3.5-sonnet",
+        "github.copilot-chat/gemini-2.0-flash-001"
+      ]
+    }
+  }
 }

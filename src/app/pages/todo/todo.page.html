@@ -123,12 +123,18 @@
 		</ion-row>
 	</ion-grid>
 
-	<!-- Add Todo FAB -->
-	<ion-fab vertical="bottom" horizontal="end" slot="fixed">
-		<ion-fab-button color="warning" (click)="showAddTodoModal = true">
-			<ion-icon name="add"></ion-icon>
+	<!-- Todo FAB -->
+	<ion-fab slot="fixed" vertical="bottom" horizontal="end">
+		<ion-fab-button>
+			<ion-icon name="chevron-up-circle" class="fab-icon-2x"></ion-icon>
 		</ion-fab-button>
+		<ion-fab-list side="top">
+			<ion-fab-button (click)="showAddTodoModal = true" data-desc="Add Todo (ctrl+/)">
+				<ion-icon name="add-circle-outline" class="fab-icon-2x"></ion-icon>
+			</ion-fab-button>
+		</ion-fab-list>
 	</ion-fab>
+
 
 	<!-- Todo Modal (Add/Edit) -->
 	<ion-modal [isOpen]="showAddTodoModal || editingTodo !== null" (didDismiss)="cancelTodoEdit()">

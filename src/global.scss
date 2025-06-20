@@ -46,7 +46,8 @@ ion-card {
 	border-radius: 12px;
 }
 
-ion-header, ion-toolbar {
+ion-header,
+ion-toolbar {
 	background-color: var(--ion-background-color);
 	--background: var(--ion-background-color);
 }
@@ -58,7 +59,7 @@ ion-title {
 	--background: var(--ion-background-color);
 }
 
-ion-back-button{
+ion-back-button {
 	background-color: var(--ion-background-color);
 	color: var(--ion-text-color);
 }
@@ -99,6 +100,27 @@ ion-back-button{
 	}
 }
 
-.back-button{
+.back-button {
 	--color: var(--ion-text-color);
+}
+
+ion-fab-button[data-desc] {
+	position: relative;
+}
+
+ion-fab-button[data-desc]::after {
+	position: absolute;
+	content: attr(data-desc);
+	z-index: 1;
+	right: 44px;
+	bottom: 4px;
+	color: var(--ion-text-color);
+	background-color: #fff;
+	padding: 8px 10px;
+	border-radius: 10px;
+	box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
+}
+
+.fab-icon-2x {
+	font-size: 2rem;
 }

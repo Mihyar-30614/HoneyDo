@@ -1,8 +1,8 @@
 {
   "recommendations": [
-    "ionic.ionic",
     "nrwl.angular-console",
     "angular.ng-template",
-    "dbaeumer.vscode-eslint"
+    "dbaeumer.vscode-eslint",
+    "Webnative.webnative"
   ]
 }

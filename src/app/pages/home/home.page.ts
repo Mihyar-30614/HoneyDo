@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '@angular/fire/auth';
 import { AuthService } from '../../services/auth.service';
@@ -33,8 +33,7 @@ import {
 	IonCard,
 	IonCardContent,
 	IonCardHeader,
-	IonAlert
-} from '@ionic/angular/standalone';
+	IonAlert, IonFabList } from '@ionic/angular/standalone';
 import { AlertController } from '@ionic/angular';
 
 @Component({
@@ -42,7 +41,7 @@ import { AlertController } from '@ionic/angular';
 	templateUrl: './home.page.html',
 	styleUrls: ['./home.page.scss'],
 	standalone: true,
-	imports: [
+	imports: [IonFabList,
 		IonCardHeader,
 		IonCardContent,
 		IonCard,
@@ -93,6 +92,8 @@ export class HomePage implements OnInit {
 	editProjectDescription: string = '';
 	showAddProjectModal = false;
 
+	@ViewChild('newProjectInput') newProjectInput?: IonInput;
+
 	constructor(
 		private auth: AuthService,
 		private data: DataService,
@@ -110,6 +111,25 @@ export class HomePage implements OnInit {
 				this.loadProjects();
 			}
 		});
+	}
+
+	// Keyboard shortcuts
+	@HostListener('document:keydown', ['$event'])
+	handleKeyboardEvent(event: KeyboardEvent): void {
+		if ((event.ctrlKey || event.metaKey) && event.key === '/') {
+			event.preventDefault();
+			this.showAddProjectModal = true;
+			this.focusNewProjectInput();
+		} else if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+			event.preventDefault();
+			this.addProject();
+		}
+	}
+
+	focusNewProjectInput(): void {
+		setTimeout(() => {
+			this.newProjectInput?.setFocus();
+		}, 100);
 	}
 
 	generateInitials(user: User): string {

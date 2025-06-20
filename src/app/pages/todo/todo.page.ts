@@ -34,15 +34,14 @@ import {
 	IonPopover,
 	IonTextarea,
 	IonText,
-	ModalController
-} from '@ionic/angular/standalone';
+	ModalController, IonFabList } from '@ionic/angular/standalone';
 
 @Component({
 	selector: 'app-todo',
 	templateUrl: './todo.page.html',
 	styleUrls: ['./todo.page.scss'],
 	standalone: true,
-	imports: [IonText,
+	imports: [IonFabList, IonText,
 		CommonModule,
 		FormsModule,
 		OrderByPipe,
@@ -117,6 +116,9 @@ export class TodoPage implements OnInit, OnDestroy {
 			event.preventDefault();
 			this.showAddTodoModal = true;
 			this.focusNewTodoInput();
+		} else if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+			event.preventDefault();
+			this.addTodo();
 		}
 	}
 
