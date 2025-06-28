@@ -1,3 +1,5 @@
+import { Todo } from './todo.model';
+
 export interface Project {
 	id: string;
 	name: string;
@@ -6,4 +8,5 @@ export interface Project {
 	createdAt?: any;
 	archived?: boolean;
 	progress?: number;
+	todos?: Todo[];
 }

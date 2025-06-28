@@ -13,6 +13,8 @@ import {
 	serverTimestamp,
 	getDocs,
 	getDoc,
+	arrayUnion,
+	arrayRemove,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Project } from '../models/project.model';
@@ -46,6 +48,7 @@ export class DataService {
 			ownerId: userId,
 			description: description || '',
 			archived: false,
+			todos: [],
 			createdAt: serverTimestamp(),
 		});
 	}
@@ -54,7 +57,7 @@ export class DataService {
 	 * Updates a project document by its ID. Accepts partial fields, including name or archived flag.
 	 */
 	updateProject(id: string, data: Partial<Project>, userId: string) {
-		const { ownerId, ...updateData } = data;
+		const { ownerId, todos, ...updateData } = data;
 		return updateDoc(doc(this.fs, `projects/${id}`), updateData);
 	}
 
@@ -90,21 +93,7 @@ export class DataService {
 		}
 
 		try {
-			// Delete all todos in the project
-			const todosQuery = query(
-				collection(this.fs, 'todos'),
-				where('projectId', '==', id),
-				where('ownerId', '==', userId) // Add owner check for todos
-			);
-			const todosSnapshot = await getDocs(todosQuery);
-
-			// Delete todos in parallel
-			const todoDeletions = todosSnapshot.docs.map(doc =>
-				deleteDoc(doc.ref)
-			);
-			await Promise.all(todoDeletions);
-
-			// Delete the project
+			// Delete the project (todos are embedded, so they'll be deleted with the project)
 			const projectRef = doc(this.fs, `projects/${id}`);
 			await deleteDoc(projectRef);
 		} catch (error) {
@@ -116,54 +105,160 @@ export class DataService {
 	/**
 	 * Fetches all todos for a project, active and archived.
 	 */
-	getTodos(projectId: string): Observable<Todo[]> {
-		const userId = this.auth.currentUser?.uid;
-		if (!userId) {
-			return new Observable(subscriber => {
-				subscriber.error('User not authenticated');
-				subscriber.complete();
-			});
-		}
-		const ref = collection(this.fs, 'todos');
-		const q = query(
-			ref,
-			where('projectId', '==', projectId),
-			where('ownerId', '==', userId),
-			orderBy('createdAt', 'desc')
-		);
-		return collectionData(q, { idField: 'id' }) as Observable<Todo[]>;
-	}
-
-	/**
-	 * Adds a new todo defaulting to not archived.
-	 */
-	addTodo(title: string, projectId: string, status: 'new' | 'in-progress' | 'done' = 'new', description?: string) {
+	async getTodos(projectId: string): Promise<Todo[]> {
 		const userId = this.auth.currentUser?.uid;
 		if (!userId) {
 			return Promise.reject('User not authenticated');
 		}
-		return addDoc(collection(this.fs, 'todos'), {
+
+		const project = await this.getProject(projectId);
+		if (!project) {
+			return [];
+		}
+		return project.todos || [];
+	}
+
+	/**
+	 * Adds a new todo to a project.
+	 */
+	async addTodo(title: string, projectId: string, status: 'new' | 'in-progress' | 'done' = 'new', description?: string, priority?: 'low' | 'medium' | 'high') {
+		const userId = this.auth.currentUser?.uid;
+		if (!userId) {
+			return Promise.reject('User not authenticated');
+		}
+
+		// Get the project to verify ownership
+		const project = await this.getProject(projectId);
+		if (!project) {
+			return Promise.reject('Project not found');
+		}
+
+		if (project.ownerId !== userId) {
+			return Promise.reject('Not authorized to add todos to this project');
+		}
+
+		// Create todo object with only defined values
+		const newTodo: any = {
+			id: this.generateTodoId(),
 			title,
 			status,
+			completed: status === 'done',
 			archived: false,
-			projectId,
-			ownerId: userId,
 			description: description || '',
-			createdAt: serverTimestamp(),
+			createdAt: new Date(),
+		};
+
+		// Only add completedAt if status is 'done'
+		if (status === 'done') {
+			newTodo.completedAt = new Date();
+		}
+
+		// Only add priority if it's provided
+		if (priority) {
+			newTodo.priority = priority;
+		}
+
+		const projectRef = doc(this.fs, `projects/${projectId}`);
+		return updateDoc(projectRef, {
+			todos: arrayUnion(newTodo)
 		});
 	}
 
 	/**
-	 * Updates a todo document by its ID. Accepts partial fields, including completed, title, or archived flag.
+	 * Updates a todo within a project.
 	 */
-	updateTodo(id: string, data: Partial<Todo>) {
-		return updateDoc(doc(this.fs, `todos/${id}`), data);
+	async updateTodo(projectId: string, todoId: string, data: Partial<Todo>) {
+		const userId = this.auth.currentUser?.uid;
+		if (!userId) {
+			return Promise.reject('User not authenticated');
+		}
+
+		// Get the project to verify ownership
+		const project = await this.getProject(projectId);
+		if (!project) {
+			return Promise.reject('Project not found');
+		}
+
+		if (project.ownerId !== userId) {
+			return Promise.reject('Not authorized to update todos in this project');
+		}
+
+		// Find and update the specific todo
+		const todos = project.todos || [];
+		const todoIndex = todos.findIndex(todo => todo.id === todoId);
+
+		if (todoIndex === -1) {
+			return Promise.reject('Todo not found');
+		}
+
+		// Auto-sync completed field with status
+		let updatedData: any = { ...data };
+		if (data.status !== undefined) {
+			updatedData.completed = data.status === 'done';
+			// Set completedAt when status becomes 'done', clear it when status changes from 'done'
+			if (data.status === 'done') {
+				updatedData.completedAt = new Date();
+			} else {
+				// Remove completedAt field instead of setting to null
+				delete updatedData.completedAt;
+			}
+		}
+
+		// Filter out any undefined values before updating
+		const cleanUpdatedData: any = {};
+		Object.keys(updatedData).forEach(key => {
+			if (updatedData[key] !== undefined) {
+				cleanUpdatedData[key] = updatedData[key];
+			}
+		});
+
+		// Update the todo
+		todos[todoIndex] = { ...todos[todoIndex], ...cleanUpdatedData };
+
+		const projectRef = doc(this.fs, `projects/${projectId}`);
+		return updateDoc(projectRef, {
+			todos: todos
+		});
 	}
 
 	/**
-	 * Permanently deletes a todo.
+	 * Permanently deletes a todo from a project.
 	 */
-	deleteTodo(id: string) {
-		return deleteDoc(doc(this.fs, `todos/${id}`));
+	async deleteTodo(projectId: string, todoId: string) {
+		const userId = this.auth.currentUser?.uid;
+		if (!userId) {
+			return Promise.reject('User not authenticated');
+		}
+
+		// Get the project to verify ownership
+		const project = await this.getProject(projectId);
+		if (!project) {
+			return Promise.reject('Project not found');
+		}
+
+		if (project.ownerId !== userId) {
+			return Promise.reject('Not authorized to delete todos from this project');
+		}
+
+		// Find the todo to remove
+		const todos = project.todos || [];
+		const todoToRemove = todos.find(todo => todo.id === todoId);
+
+		if (!todoToRemove) {
+			return Promise.reject('Todo not found');
+		}
+
+		const projectRef = doc(this.fs, `projects/${projectId}`);
+		return updateDoc(projectRef, {
+			todos: arrayRemove(todoToRemove)
+		});
+	}
+
+	/**
+	 * Generates a unique ID for todos
+	 */
+	private generateTodoId(): string {
+		return Date.now().toString(36) + Math.random().toString(36).substr(2);
 	}
 }
+

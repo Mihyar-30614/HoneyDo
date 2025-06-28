@@ -3,7 +3,7 @@ export interface Todo {
 	id: string;
 	title: string;
 	completed: boolean;
-	projectId: string;
+	completedAt?: any;
 	createdAt?: any;
 	archived?: boolean;
 	description?: string;

@@ -105,6 +105,37 @@ ion-card {
 		}
 	}
 
+	.badges {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.priority-badge {
+		padding: 4px 8px;
+		border-radius: 12px;
+		font-size: 0.75rem;
+		font-weight: 500;
+		text-transform: capitalize;
+		user-select: none;
+
+		&.low {
+			background: var(--ion-color-success-tint);
+			color: var(--ion-color-success-contrast);
+		}
+
+		&.medium {
+			background: var(--ion-color-warning-tint);
+			color: var(--ion-color-warning-contrast);
+		}
+
+		&.high {
+			background: var(--ion-color-danger-tint);
+			color: var(--ion-color-danger-contrast);
+		}
+	}
+
 	.status-badge {
 		padding: 4px 8px;
 		border-radius: 12px;
@@ -196,6 +227,14 @@ ion-card {
 	color: var(--ion-text-color);
 	margin: 24px 16px 16px;
 	padding-top: 16px;
+}
+
+.filter-section {
+	padding: 0 16px 16px;
+
+	.priority-filter {
+		max-width: 200px;
+	}
 }
 
 ion-fab {

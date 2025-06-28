@@ -194,7 +194,7 @@ export class HomePage implements OnInit {
 				// Calculate progress for each project
 				const allProjects = [...this.projects, ...this.archivedProjects];
 				allProjects.forEach(project => {
-					this.data.getTodos(project.id).subscribe(todos => {
+					this.data.getTodos(project.id).then(todos => {
 						const totalTodos = todos.length;
 						if (totalTodos === 0) {
 							project.progress = 0;
@@ -203,6 +203,9 @@ export class HomePage implements OnInit {
 
 						const completedTodos = todos.filter(todo => todo.status === 'done').length;
 						project.progress = Math.round((completedTodos / totalTodos) * 100);
+					}).catch(error => {
+						console.error('Error loading todos for project:', project.id, error);
+						project.progress = 0;
 					});
 				});
 

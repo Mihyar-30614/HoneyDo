@@ -34,6 +34,8 @@ import {
 	IonPopover,
 	IonTextarea,
 	IonText,
+	IonSelect,
+	IonSelectOption,
 	ModalController, IonFabList } from '@ionic/angular/standalone';
 
 @Component({
@@ -68,6 +70,8 @@ import {
 		IonCheckbox,
 		IonPopover,
 		IonTextarea,
+		IonSelect,
+		IonSelectOption,
 	],
 })
 export class TodoPage implements OnInit, OnDestroy {
@@ -81,11 +85,14 @@ export class TodoPage implements OnInit, OnDestroy {
 	// Form state
 	newTodoTitle = '';
 	newTodoDescription = '';
+	newTodoPriority: 'low' | 'medium' | 'high' = 'medium';
 	editingTodo: Todo | null = null;
 	editTodoTitle = '';
 	editTodoDescription = '';
+	editTodoPriority: 'low' | 'medium' | 'high' = 'medium';
 	showAddTodoModal = false;
 	selectedTodo: Todo | null = null;
+	priorityFilter = '';
 
 	// Subscriptions
 	private authSubscription: Subscription | null = null;
@@ -163,9 +170,12 @@ export class TodoPage implements OnInit, OnDestroy {
 	}
 
 	private loadTodos(projectId: string): void {
-		this.data.getTodos(projectId).subscribe(list => {
+		this.data.getTodos(projectId).then(list => {
 			this.todos = list.filter(t => !t.archived);
 			this.archivedTodos = list.filter(t => t.archived);
+			this.loading = false;
+		}).catch(error => {
+			console.error('Error loading todos:', error);
 			this.loading = false;
 		});
 	}
@@ -173,12 +183,18 @@ export class TodoPage implements OnInit, OnDestroy {
 	// Todo actions
 	addTodo(): void {
 		if (!this.newTodoTitle.trim() || !this.project) return;
-		this.data.addTodo(this.newTodoTitle, this.project.id, 'new', this.newTodoDescription)
+		this.data.addTodo(this.newTodoTitle, this.project.id, 'new', this.newTodoDescription, this.newTodoPriority)
 			.then(() => {
 				this.newTodoTitle = '';
 				this.newTodoDescription = '';
+				this.newTodoPriority = 'medium';
 				this.showAddTodoModal = false;
 				this.modalCtrl.dismiss();
+				// Reload todos after adding
+				this.loadTodos(this.project!.id);
+			})
+			.catch(error => {
+				console.error('Error adding todo:', error);
 			});
 	}
 
@@ -186,19 +202,27 @@ export class TodoPage implements OnInit, OnDestroy {
 		this.editingTodo = todo;
 		this.editTodoTitle = todo.title;
 		this.editTodoDescription = todo.description || '';
+		this.editTodoPriority = todo.priority || 'medium';
 	}
 
 	updateTodo(): void {
-		if (!this.editingTodo || !this.editTodoTitle.trim()) return;
-		this.data.updateTodo(this.editingTodo.id, {
+		if (!this.editingTodo || !this.editTodoTitle.trim() || !this.project) return;
+		this.data.updateTodo(this.project.id, this.editingTodo.id, {
 			title: this.editTodoTitle,
-			description: this.editTodoDescription
+			description: this.editTodoDescription,
+			priority: this.editTodoPriority
 		})
 			.then(() => {
 				this.editingTodo = null;
 				this.editTodoTitle = '';
 				this.editTodoDescription = '';
+				this.editTodoPriority = 'medium';
 				this.modalCtrl.dismiss();
+				// Reload todos after updating
+				this.loadTodos(this.project!.id);
+			})
+			.catch(error => {
+				console.error('Error updating todo:', error);
 			});
 	}
 
@@ -206,29 +230,59 @@ export class TodoPage implements OnInit, OnDestroy {
 		this.editingTodo = null;
 		this.editTodoTitle = '';
 		this.editTodoDescription = '';
+		this.editTodoPriority = 'medium';
 		this.showAddTodoModal = false;
 		this.newTodoTitle = '';
 		this.newTodoDescription = '';
+		this.newTodoPriority = 'medium';
 		this.modalCtrl.dismiss();
 	}
 
 	archiveTodo(id: string): void {
-		this.data.updateTodo(id, { archived: true });
+		if (!this.project) return;
+		this.data.updateTodo(this.project.id, id, { archived: true })
+			.then(() => {
+				this.loadTodos(this.project!.id);
+			})
+			.catch(error => {
+				console.error('Error archiving todo:', error);
+			});
 	}
 
 	unarchiveTodo(id: string): void {
-		this.data.updateTodo(id, { archived: false });
+		if (!this.project) return;
+		this.data.updateTodo(this.project.id, id, { archived: false })
+			.then(() => {
+				this.loadTodos(this.project!.id);
+			})
+			.catch(error => {
+				console.error('Error unarchiving todo:', error);
+			});
 	}
 
 	deleteTodo(id: string): void {
-		this.data.deleteTodo(id);
+		if (!this.project) return;
+		this.data.deleteTodo(this.project.id, id)
+			.then(() => {
+				this.loadTodos(this.project!.id);
+			})
+			.catch(error => {
+				console.error('Error deleting todo:', error);
+			});
 	}
 
 	cycleStatus(todo: Todo): void {
+		if (!this.project) return;
 		const order: ('new' | 'in-progress' | 'done')[] = ['new', 'in-progress', 'done'];
 		const currentIndex = order.indexOf(todo.status);
 		const nextStatus = order[(currentIndex + 1) % order.length];
-		this.data.updateTodo(todo.id, { status: nextStatus });
+		this.data.updateTodo(this.project.id, todo.id, { status: nextStatus })
+			.then(() => {
+				this.loadTodos(this.project!.id);
+			})
+			.catch(error => {
+				console.error('Error updating todo status:', error);
+			});
 	}
 
 	openTodoActions(todo: Todo): void {
@@ -253,5 +307,12 @@ export class TodoPage implements OnInit, OnDestroy {
 
 	get inProgressTodosCount(): number {
 		return this.todos.filter(t => t.status === 'in-progress').length;
+	}
+
+	get filteredTodos(): Todo[] {
+		if (!this.priorityFilter) {
+			return this.todos;
+		}
+		return this.todos.filter(todo => todo.priority === this.priorityFilter);
 	}
 }

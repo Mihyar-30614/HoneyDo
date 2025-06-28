@@ -71,9 +71,25 @@
 		<h3>No Active Todos</h3>
 		<p>Add a new todo to get started</p>
 	</div>
+
+	<!-- Priority Filter -->
+	<div class="filter-section" *ngIf="todos.length > 0">
+		<ion-select
+			[(ngModel)]="priorityFilter"
+			placeholder="Filter by priority"
+			interface="popover"
+			class="priority-filter"
+		>
+			<ion-select-option value="">All Priorities</ion-select-option>
+			<ion-select-option value="high">High Priority</ion-select-option>
+			<ion-select-option value="medium">Medium Priority</ion-select-option>
+			<ion-select-option value="low">Low Priority</ion-select-option>
+		</ion-select>
+	</div>
+
 	<ion-grid>
 		<ion-row>
-			<ion-col size="12" *ngFor="let todo of todos | orderBy: ['status']: ['in-progress', 'new', 'done']">
+			<ion-col size="12" *ngFor="let todo of filteredTodos | orderBy: ['status']: ['in-progress', 'new', 'done']">
 				<div class="todo-item" [class]="todo.status" (click)="editT(todo)">
 					<ion-checkbox slot="start" [checked]="todo.status === 'done'"
 						(ionChange)="cycleStatus(todo); $event.stopPropagation()"></ion-checkbox>
@@ -81,9 +97,14 @@
 						<h2 [class.line-through]="todo.status === 'done'">{{ todo.title }}</h2>
 						<p>Created: {{ todo.createdAt?.toDate() | date:'short' }}</p>
 					</ion-label>
-					<ion-badge class="status-badge" [class]="todo.status" (click)="cycleStatus(todo); $event.stopPropagation()">
-						{{ todo.status }}
-					</ion-badge>
+					<div class="badges">
+						<ion-badge class="priority-badge" [class]="todo.priority || 'medium'" *ngIf="todo.priority">
+							{{ todo.priority }}
+						</ion-badge>
+						<ion-badge class="status-badge" [class]="todo.status" (click)="cycleStatus(todo); $event.stopPropagation()">
+							{{ todo.status }}
+						</ion-badge>
+					</div>
 					<ion-button fill="clear" size="small" class="actions-menu" (click)="openTodoActions(todo); $event.stopPropagation()">
 						<ion-icon name="ellipsis-vertical"></ion-icon>
 					</ion-button>
@@ -107,9 +128,14 @@
 						<h2>{{ todo.title }}</h2>
 						<p>Created: {{ todo.createdAt?.toDate() | date:'short' }}</p>
 					</ion-label>
-					<ion-badge class="status-badge" [class]="todo.status">
-						{{ todo.status }}
-					</ion-badge>
+					<div class="badges">
+						<ion-badge class="priority-badge" [class]="todo.priority || 'medium'" *ngIf="todo.priority">
+							{{ todo.priority }}
+						</ion-badge>
+						<ion-badge class="status-badge" [class]="todo.status">
+							{{ todo.status }}
+						</ion-badge>
+					</div>
 					<div class="actions">
 						<ion-button fill="clear" (click)="unarchiveTodo(todo.id); $event.stopPropagation()">
 							<ion-icon name="refresh"></ion-icon>
@@ -176,6 +202,20 @@
 						autocorrect="on"
 						spellcheck="true"
 					/>
+					<ion-select
+						[ngModel]="editingTodo ? editTodoPriority : newTodoPriority"
+						(ngModelChange)="editingTodo ? editTodoPriority = $event : newTodoPriority = $event"
+						name="priority"
+						label="Priority"
+						labelPlacement="stacked"
+						fill="outline"
+						class="ion-margin-top"
+						interface="popover"
+					>
+						<ion-select-option value="low">Low</ion-select-option>
+						<ion-select-option value="medium">Medium</ion-select-option>
+						<ion-select-option value="high">High</ion-select-option>
+					</ion-select>
 					<ion-button
 						expand="block"
 						type="submit"
