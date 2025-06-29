@@ -17,8 +17,6 @@ import {
 	IonGrid,
 	IonLabel,
 	IonIcon,
-	IonItem,
-	IonList,
 	IonButtons,
 	IonHeader,
 	IonToolbar,
@@ -31,19 +29,21 @@ import {
 	IonCard,
 	IonCardContent,
 	IonCheckbox,
-	IonPopover,
 	IonTextarea,
 	IonText,
 	IonSelect,
 	IonSelectOption,
-	ModalController, IonFabList } from '@ionic/angular/standalone';
+	ModalController,
+	IonFabList,
+	IonActionSheet
+} from '@ionic/angular/standalone';
 
 @Component({
 	selector: 'app-todo',
 	templateUrl: './todo.page.html',
 	styleUrls: ['./todo.page.scss'],
 	standalone: true,
-	imports: [IonFabList, IonText,
+	imports: [IonActionSheet, IonFabList, IonText,
 		CommonModule,
 		FormsModule,
 		OrderByPipe,
@@ -54,8 +54,6 @@ import {
 		IonGrid,
 		IonLabel,
 		IonIcon,
-		IonItem,
-		IonList,
 		IonButtons,
 		IonHeader,
 		IonToolbar,
@@ -68,10 +66,10 @@ import {
 		IonCard,
 		IonCardContent,
 		IonCheckbox,
-		IonPopover,
 		IonTextarea,
 		IonSelect,
 		IonSelectOption,
+		IonActionSheet
 	],
 })
 export class TodoPage implements OnInit, OnDestroy {
@@ -97,6 +95,31 @@ export class TodoPage implements OnInit, OnDestroy {
 	// Subscriptions
 	private authSubscription: Subscription | null = null;
 	private routeSubscription: Subscription | null = null;
+
+	actionSheetButtons = [
+		{
+			text: 'Change Status',
+			handler: () => { this.cycleStatus(this.selectedTodo!); this.selectedTodo = null; }
+		},
+		{
+			text: 'Edit',
+			handler: () => { this.editT(this.selectedTodo!); this.selectedTodo = null; }
+		},
+		{
+			text: 'Archive',
+			handler: () => { this.archiveTodo(this.selectedTodo!.id); this.selectedTodo = null; }
+		},
+		{
+			text: 'Delete',
+			handler: () => { this.deleteTodo(this.selectedTodo!.id); this.selectedTodo = null; }
+		},
+		{
+			text: 'Cancel',
+			icon: 'close',
+			role: 'cancel',
+			handler: () => { this.selectedTodo = null; }
+		}
+	];
 
 	@ViewChild('newTodoInput') newTodoInput?: IonInput;
 

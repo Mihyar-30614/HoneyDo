@@ -231,27 +231,11 @@
 	</ion-modal>
 
 	<!-- Todo Actions Popover -->
-	<ion-popover [isOpen]="selectedTodo !== null" (didDismiss)="selectedTodo = null">
-		<ng-template>
-			<ion-list>
-				<ion-item button (click)="cycleStatus(selectedTodo!); selectedTodo = null">
-					<ion-icon slot="start"
-						[name]="selectedTodo?.status === 'done' ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
-					<ion-label>Change Status</ion-label>
-				</ion-item>
-				<ion-item button (click)="editT(selectedTodo!); selectedTodo = null">
-					<ion-icon slot="start" name="create"></ion-icon>
-					<ion-label>Edit</ion-label>
-				</ion-item>
-				<ion-item button (click)="archiveTodo(selectedTodo!.id); selectedTodo = null">
-					<ion-icon slot="start" name="archive"></ion-icon>
-					<ion-label>Archive</ion-label>
-				</ion-item>
-				<ion-item button (click)="deleteTodo(selectedTodo!.id); selectedTodo = null">
-					<ion-icon slot="start" name="trash"></ion-icon>
-					<ion-label>Delete</ion-label>
-				</ion-item>
-			</ion-list>
-		</ng-template>
-	</ion-popover>
+	<ion-action-sheet
+		[isOpen]="selectedTodo !== null"
+		(didDismiss)="selectedTodo = null"
+		[header]="selectedTodo?.title || 'Todo Actions'"
+		[buttons]="actionSheetButtons"
+		mode="ios"
+	/>
 </ion-content>
